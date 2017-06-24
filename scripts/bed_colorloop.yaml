@@ -1,0 +1,7 @@
+sequence:
+  service: light.turn_on
+  data:
+    entity_id: group.bed_lights
+    effect: colorloop
+    brightness: 250
+    transition: 5

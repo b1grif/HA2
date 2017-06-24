@@ -1,0 +1,9 @@
+###################################################################
+# stop_bedtime_timer:
+###################################################################
+alias: "Turn off bedtime timer"
+sequence:
+  - service: homeassistant.turn_off
+    data:
+      entity_id: script.start_bedtime_timer
+  - service: shell_command.stop_timer

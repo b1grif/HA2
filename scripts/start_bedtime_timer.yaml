@@ -1,0 +1,8 @@
+###################################################################
+# start_bedtime_timer:
+###################################################################
+alias: "Turn off bedtime timer after delay"
+sequence:
+  - service: shell_command.start_timer
+  - delay:
+      seconds: 180

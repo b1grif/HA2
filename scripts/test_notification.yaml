@@ -1,0 +1,10 @@
+sequence:
+  - event: LOGBOOK_ENTRY
+    event_data:
+      name: EVENT
+      message: "Sending test HTML5 Notification."  
+  - service: notify.html5
+    data:
+      title: "Test Notification"
+      message: 'Did my test notification work?'
+      

@@ -200,6 +200,24 @@ zwave:
 group: !include groups.yaml
 automation: !include automations.yaml
 
+# Single Files
+
+logger: !include logger/logger.yaml
+input_boolean: !include input_booleans.yaml
+input_select: !include input_selects.yaml
+shell_command: !include shell_commands.yaml
+#zwave: !include zwave_device_config.yaml
+
+# Merge List
+# will return the content of a directory as a list
+# with each file content being an entry in the list
+alert: !include_dir_merge_list alert
+
+# Dir List
+switch: !include_dir_list switch
+zone: !include_dir_list zones
+
+
 ####################################################
 #                                                  #
 #                     Enables                      #

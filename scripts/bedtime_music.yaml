@@ -1,0 +1,5 @@
+sequence:
+- service: media_player.select_source
+  data:
+    entity_id: media_player.bedroom
+    source: 'River Flows In You - Original'
