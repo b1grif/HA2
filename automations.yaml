@@ -1,1 +1,2979 @@
-[]
+###################################################################
+- id: alarm_front_door
+###################################################################
+  alias: Alarm Front Door
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.aeotec_zw112_door_window_sensor_6_sensor_3_0
+      state: 'on'
+
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_boolean.company
+        state: 'off'
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: alarm_control_panel.alarm
+          state: 'armed_home'
+        - condition: state
+          entity_id: alarm_control_panel.alarm
+          state: 'armed_away'
+
+  action:
+# Trigger Alarm
+    - service: alarm_control_panel.alarm_trigger
+      entity_id: alarm_control_panel.alarm
+# Event Recorder
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Alarm triggered"}
+
+###################################################################
+- id: alarm_triggered_actions
+###################################################################
+  alias: Alarm Triggered Actions
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: alarm_control_panel.alarm
+      state: 'triggered'
+
+  action:
+# Notifications
+    - service: ifttt.trigger
+      data: {"event":"gina_text", "value1":"Alarm", "value2":"triggered!"}
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Alarm triggered actions"}
+    - service: notify.html5
+      data:
+        title: "Alarm Notification"
+        message: 'Alarm was triggered!'
+        target: "bills_6p_2"
+        data:
+          tag: 'alarm_triggered'
+# Turn on Living Room lamps
+    - service: switch.turn_on
+      entity_id:
+        - switch.lamp_1
+        - switch.lamp_2
+# Turn on Kitchen lights
+    - service: light.turn_on
+      entity_id:
+        - light.__level_2_0
+# Turn on bed lights - red flashing
+    - service: script.panic1
+# Group all the Sonos
+    - service: media_player.sonos_join
+      data:
+        master: media_player.bedroom
+      entity_id:
+        - media_player.kitchen
+        - media_player.living_room
+        - media_player.playroom
+# Set Sonos Volume
+    - service: media_player.volume_set
+      data:
+        entity_id:
+          - media_player.bedroom
+          - media_player.kitchen
+          - media_player.living_room
+          - media_player.playroom
+        volume_level: 0.50
+# Sonos Notification
+    - service: script.turn_on
+      entity_id: script.sonos_tts
+      data:
+        variables:
+          where: 'media_player.living_room'
+          what: 'Intruder! Alarm Triggered!'
+# Delay
+    - delay: 00:00:10
+# Sonos Alarm
+    - service: media_player.play_media
+      data_template:
+        entity_id: media_player.living_room
+        media_content_id: http://192.168.0.27:8123/local/policesiren.mp3
+        media_content_type: audio/mp3
+
+###################################################################
+- id: alarm_triggered_disable
+###################################################################
+  alias: Alarm Triggered Disable
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: alarm_control_panel.alarm
+      from: 'triggered'
+      to: 'disarmed'
+  action:
+# Turn off Living Room lamps
+    - service: switch.turn_off
+      entity_id:
+        - switch.lamp_1
+        - switch.lamp_2
+# Turn off bed lights - red flashing
+    - service: script.turn_off
+      entity_id:
+        - script.panic1
+        - script.panic2
+# Turn off Kitchen + bed lights
+    - service: light.turn_off
+      entity_id:
+        - light.__level_2_0
+        - group.bed_lights
+# Notifications
+    - service: ifttt.trigger
+      data: {"event":"gina_text", "value1":"Alarm was triggered but", "value2":"cleared. Alarm system is currently disabled"}
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Alarm triggered was cleared"}
+    - service: notify.html5
+      data:
+        title: "Alarm Notification"
+        message: 'Alarm was triggered but was cleared. Alarm system is currently disabled'
+        target: "bills_6p_2"
+        data:
+          tag: 'alarm_triggered'
+
+###################################################################
+- id: arrival_billy_after_8pm
+###################################################################
+  alias: Arrival Billy After 8pm
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: input_boolean.billy_home
+      state: 'on'
+    - platform: state
+      entity_id: input_select.billy_status
+      state: "home"
+
+  condition:
+    - condition: time
+      before: '08:00:00'
+      after: '20:00:00'
+    - condition: state
+      entity_id: input_boolean.media_playing
+      state: 'off'
+    - condition: state
+      entity_id: input_boolean.sexy_time
+      state: 'off'
+
+  action:
+# Unlock Kevo
+    - service: switch.turn_off
+      entity_id: switch.frontdoor_kevo
+# Alarm disabled
+    - service: alarm_control_panel.alarm_disarm
+      entity_id: alarm_control_panel.alarm
+# Turn on TV
+    - service: switch.turn_on
+      entity_id:
+        - switch.tv_switch
+#      - service: ifttt.trigger
+#        data: {"event":"billy_ifttt", "value1":"Billy", "value2":"Home!"}
+#      - service: ifttt.trigger
+#        data: {"event":"gina_text", "value1":"Billy", "value2":"Home!"}
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Billy Arrive Home After 8pm"}
+    - service: notify.html5
+      data:
+        title: "Billy Arrive Home Notification"
+        message: 'Billy Arrive Home After 8pm'
+        target: "bills_6p_2"
+        data:
+          tag: 'home_status'
+
+###################################################################
+- id: arrival_billy_before_8pm
+###################################################################
+  alias: Arrival Billy Before 8pm
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: input_boolean.billy_home
+      state: 'on'
+
+  condition:
+    - condition: time
+      after: '08:00:00'
+      before: '20:00:00'
+    - condition: state
+      entity_id: input_boolean.sexy_time
+      state: 'off'
+
+  action:
+# Unlock Kevo
+    - service: switch.turn_off
+      entity_id: switch.frontdoor_kevo
+# Alarm disabled
+    - service: alarm_control_panel.alarm_disarm
+      entity_id: alarm_control_panel.alarm
+# Event Recorder
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Billy Arrive Home Before 8pm"}
+# Notification
+    - service: notify.html5
+      data:
+        title: "Billy Arrive Home Notification"
+        message: 'Billy Arrive Home Before 8pm'
+        target: "bills_6p_2"
+        data:
+          tag: 'home_status'
+    - service: notify.living_room_tv
+      data:
+        message: "Billy Arrive Home Before 8pm"
+# Group all the Sonos
+    - service: media_player.sonos_join
+      data:
+        master: media_player.bedroom
+      entity_id:
+        - media_player.kitchen
+        - media_player.living_room
+        - media_player.playroom
+# Set Sonos Volume
+    - service: media_player.volume_set
+      data:
+        entity_id:
+          - media_player.bedroom
+          - media_player.kitchen
+          - media_player.living_room
+          - media_player.playroom
+        volume_level: 0.2
+# Turn on music
+    - service: media_player.play_media
+      entity_id:
+        - media_player.bedroom
+#          - media_player.kitchen
+#          - media_player.living_room
+#          - media_player.playroom
+#        data:
+#          media_content_id: x-sonosapi-radio-http:A0DvPDnowsJZGhqIun9xVe52WvXXyi3uouZCihFcCmdYbg2P8L50_A.mp3?sid=151&flags=32&sn=1
+#          media_content_type: playlist
+# Start White Girl Moves on bedroom Sonos
+    - service: shell_command.sonos_playlist_white_girl_moves
+# Turn on TV
+    - service: switch.turn_on
+      entity_id:
+        - switch.tv_switch
+
+# Is this right?
+#      - service: media_player.volume_set
+#        entity_id:
+#          - media_player.sonos_living_room
+#          - media_player.sonos_kitchen  
+#        data:
+#          volume_level: 0.8  
+#
+#      - service: media_player.play_media
+#        data_template:
+#          entity_id:
+#            - media_player.sonos_living_room
+#          media_content_id: !secret dog_bark_mp3
+#          media_content_type: audio/mp4
+
+###################################################################  
+- id: arrival_family_after_8pm
+###################################################################
+  alias: Arrival Family After 8pm
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: input_boolean.family
+      state: 'on'
+        
+  condition:
+    - condition: time
+      before: '08:00:00'
+      after: '20:00:00'
+
+  action:
+# Unlock Kevo
+    - service: switch.turn_off
+      entity_id: switch.frontdoor_kevo
+# Alarm disabled
+    - service: alarm_control_panel.alarm_disarm
+      entity_id: alarm_control_panel.alarm
+# Event Recorder
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Family Arrive At The House After 8PM"}
+# Notify Gina
+#      - service: ifttt.trigger
+#        data: {"event":"gina_text", "value1":"Billy", "value2":"Home!"}
+# Notify Billy
+    - service: notify.html5
+      data:
+        title: "Family Arrive At The House After 8PM"
+        message: 'Family Arrive At The House After 8PM'
+        target: "bills_6p_2"
+        data:
+          tag: 'home_status'
+###################################################################
+- id: arrival_family_before_8pm
+###################################################################
+  alias: Arrival Family Before 8pm
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: input_boolean.family
+      state: 'on'
+
+  condition:
+    - condition: time
+      after: '08:00:00'
+      before: '20:00:00'
+
+  action:
+# Unlock Kevo
+    - service: switch.turn_off
+      entity_id: switch.frontdoor_kevo
+# Alarm disabled
+    - service: alarm_control_panel.alarm_disarm
+      entity_id: alarm_control_panel.alarm
+# Event Recorder
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Family Arrive At The House Before 8PM"}
+# Notify Gina
+#      - service: ifttt.trigger
+#        data: {"event":"gina_text", "value1":"Billy", "value2":"Home!"}
+# Notify Billy
+    - service: notify.html5
+      data:
+        title: "Family Arrive At The House Before 8PM"
+        message: 'Family Arrive At The House Before 8PM'
+        target: "bills_6p_2"
+        data:
+          tag: 'home_status'
+
+###################################################################
+- id: arrival_gina_after_8pm
+###################################################################
+  alias: Arrival Gina After 8pm
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: input_boolean.gina_home
+      state: 'on'
+
+  condition:
+    - condition: time
+      before: '08:00:00'
+      after: '20:00:00'
+    - condition: state
+      entity_id: input_boolean.sexy_time
+      state: 'off'
+
+  action:
+# Unlock Kevo
+    - service: switch.turn_off
+      entity_id: switch.frontdoor_kevo
+# Alarm disabled
+    - service: alarm_control_panel.alarm_disarm
+      entity_id: alarm_control_panel.alarm
+# Turn on the TV
+    - service: switch.turn_on
+      entity_id:
+        - switch.tv_switch
+#      - service: ifttt.trigger
+#        data: {"event":"billy_ifttt", "value1":"Gina", "value2":"home"}
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Gina Arrive Home After 8pm"}
+    - service: notify.html5
+      data:
+        title: "Gina Arrive Home Notification"
+        message: 'Gina Arrive Home After 8pm'
+        target: "bills_6p_2"
+        data:
+          tag: 'home_status'
+
+###################################################################
+- id: arrival_gina_before_8pm
+###################################################################
+  alias: Arrival Gina Before 8pm
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: input_boolean.gina_home
+      state: 'on'
+
+  condition:
+    - condition: time
+      after: '08:00:00'
+      before: '20:00:00'
+    - condition: state
+      entity_id: input_boolean.sexy_time
+      state: 'off'
+
+  action:
+# Unlock Kevo
+    - service: switch.turn_off
+      entity_id: switch.frontdoor_kevo
+# Alarm disabled
+    - service: alarm_control_panel.alarm_disarm
+      entity_id: alarm_control_panel.alarm
+# Turn on the TV
+    - service: switch.turn_on
+      entity_id:
+        - switch.tv_switch
+#      - service: ifttt.trigger
+#        data: {"event":"billy_ifttt", "value1":"Gina", "value2":"home"}
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Gina Arrive Home Before 8pm"}
+    - service: notify.html5
+      data:
+        title: "Gina Arrive Home Notification"
+        message: 'Gina Arrive Home Before 8pm'
+        target: "bills_6p_2"
+        data:
+          tag: 'home_status'
+
+###################################################################
+- id: bedtime
+###################################################################
+  alias: Bedtime
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: input_boolean.bedtime
+      state: 'on'
+
+  condition:
+    condition: or
+    conditions:
+      - condition: state
+        entity_id: input_boolean.billy_home
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.gina_home
+        state: 'on'
+      - condition: state
+        entity_id: input_select.billy_status
+        state: "home"
+      - condition: state
+        entity_id: input_select.gina_status
+        state: "home"
+
+  action:
+# Turn Upstairs lights on
+    - service: light.turn_on
+      entity_id:
+        - group.bed_lights
+      data:
+        brightness: 30
+        xy_color: [ 0.4571, 0.4453 ]
+# HTML5 Notification
+#      - service: notify.html5
+#        data:
+#          title: "Bedtime Notification"
+#          message: 'Bedtime Automation 3 minutes to go'
+#          target: "bills_6p_2"
+#          data:
+#            tag: 'bedtime_automation'
+# Wait 1 minute
+#      - delay: 00:01:00
+# Turn off Living room lights and TV
+    - service: switch.turn_off
+      entity_id:
+        - group.all_wemo_switches
+    - service: media_player.turn_off
+      entity_id:
+        - media_player.living_room_tv
+# HTML5 Notification
+#      - service: notify.html5
+#        data:
+#          title: "Bedtime Notification"
+#          message: 'Bedtime Automation 2 minutes to go'
+#          target: "bills_6p_2"
+#          data:
+#            tag: 'bedtime_automation'
+# Wait 1 minute
+#      - delay: 00:01:00
+# HTML5 Notification
+#      - service: notify.html5
+#        data:
+#          title: "Bedtime Notification"
+#          message: 'Bedtime Automation 1 minutes to go'
+#          target: "bills_6p_2"
+#          data:
+#            tag: 'bedtime_automation'
+# Wait 1 minute
+#      - delay: 00:01:00
+# Group all the Sonos
+    - service: media_player.sonos_unjoin
+      entity_id:
+        - media_player.bedroom
+        - media_player.kitchen
+        - media_player.living_room
+        - media_player.playroom
+# Set Sonos Volume
+    - service: media_player.volume_set
+      data:
+        entity_id:
+          - media_player.bedroom
+          - media_player.kitchen
+          - media_player.living_room
+          - media_player.playroom
+        volume_level: 0.01
+# Start Tasker Sleepy Time
+    - service: switch.turn_on
+      entity_id: switch.sleepytime_tasker
+# Start Sleepytime on bedroom Sonos
+#      - service: script.bedtime_music
+    - service: shell_command.sonos_playlist_sleepy_time
+# Turn off bedlights
+    - service: light.turn_off
+      entity_id:
+        - group.bed_lights
+# Lock Kevo
+    - service: switch.turn_on
+      entity_id: switch.frontdoor_kevo
+# Arm Security
+    - service: alarm_control_panel.alarm_arm_home
+      entity_id: alarm_control_panel.alarm
+# Turn on sleeping status
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.billy_status
+        option: "sleeping"
+# Wait 10 minutes
+#      - delay: 00:10:00
+# Stop lights from turning back on
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.lights_disable
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Bedtime"}
+# HTML5 Notification
+    - service: notify.html5
+      data:
+        title: "Bedtime Notification"
+        message: 'Bedtime Automation finished'
+        target: "bills_6p_2"
+        data:
+          tag: 'bedtime_automation'
+
+###################################################################
+- id: bedtime_start_timer
+###################################################################
+  alias: Start timer if input_boolean is turned on
+  trigger:
+    platform: state
+    entity_id: input_boolean.bedtime
+    from: 'off'
+    to: 'on'
+  action:
+    service: script.start_bedtime_timer
+
+##################################################################
+- id: bedtime_stop_timer
+###################################################################
+  alias: Stop timer if input_boolean is turned off
+  trigger:
+    platform: state
+    entity_id: input_boolean.bedtime
+    from: 'on'
+    to: 'off'
+  action:
+    service: homeassistant.turn_on
+    entity_id: script.stop_bedtime_timer
+
+##################################################################
+- id: HA_startup_stop_timer
+###################################################################
+  alias: HA Startup Stop Timer
+  trigger:
+    - platform: homeassistant
+      event: start
+  action:
+    service: shell_command.stop_timer
+###################################################################
+- id: lights_off_during_day_presence
+###################################################################
+  alias: Lights off During Day Presence
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: input_boolean.billy_home, input_boolean.gina_home, input_boolean.family, input_boolean.company
+      state: 'on'
+
+  condition:
+    condition: and
+    conditions:
+# The sun is up
+      - condition: sun
+        after: sunrise
+# After 6am but before 2pm
+      - condition: time
+        after: '06:00'
+        before: '14:00'
+# Lights Disable switch is off
+      - condition: state
+        entity_id: input_boolean.lights_disable
+        state: 'off'
+# Media Mode switch is off
+      - condition: state
+        entity_id: input_boolean.media_mode
+        state: 'off'
+          
+  action:
+# Turn off lights in the living room
+    - service: switch.turn_off
+      entity_id:
+        - switch.lamp_1
+        - switch.lamp_2
+# Turn off bed lights and kitchen lights
+    - service: light.turn_off
+      entity_id:
+        - group.bed_lights
+        - light.__level_2_0
+# Event recorder
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Lights off During Day Presence"}
+
+###################################################################
+- id: lights_off_during_day_sun
+###################################################################
+  alias: Lights off During Day Sun
+  hide_entity: false
+  trigger:
+    - platform: sun
+      event: sunrise
+
+  condition:
+    condition: and
+    conditions:
+# Lights Disable switch is off
+      - condition: state
+        entity_id: input_boolean.lights_disable
+        state: 'off'
+# Media Mode switch is off
+      - condition: state
+        entity_id: input_boolean.media_mode
+        state: 'off'
+
+  action:
+# Turn off lights in the living room
+    - service: switch.turn_off
+      entity_id:
+        - switch.lamp_1
+        - switch.lamp_2
+# Turn off bed lights and kitchen lights
+    - service: light.turn_off
+      entity_id:
+        - group.bed_lights
+        - light.__level_2_0
+# Event recorder
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Lights Off During Day Sun"}
+
+###################################################################
+- id: lights_on_after_dark_presence
+###################################################################
+  alias: Lights on After Dark Presence
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: input_boolean.billy_home, input_boolean.gina_home, input_boolean.family, input_boolean.company
+      state: 'on'
+
+  condition:
+    condition: and
+    conditions:
+# The sun is down
+      - condition: sun
+        after: sunset
+# After 6am but before 11pm
+      - condition: time
+        after: '06:00'
+        before: '23:59'
+# Lights Disable switch is off
+      - condition: state
+        entity_id: input_boolean.lights_disable
+        state: 'off'
+# Media Mode switch is off
+      - condition: state
+        entity_id: input_boolean.media_mode
+        state: 'off'
+          
+  action:
+# Turn on 1 light in the living room
+    - service: switch.turn_on
+      entity_id:
+        - switch.lamp_2
+# Event recorder
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Lights on After Dark Presence"}
+
+###################################################################
+- id: lights_on_after_dark_sun
+###################################################################
+  alias: Lights on After Dark Sun
+  hide_entity: false
+  trigger:
+    - platform: sun
+      event: sunset
+
+  condition:
+    condition: and
+    conditions:
+# Lights Disable switch is off
+      - condition: state
+        entity_id: input_boolean.lights_disable
+        state: 'off'
+# Media Mode switch is off
+      - condition: state
+        entity_id: input_boolean.media_mode
+        state: 'off'
+      - condition: or
+        conditions:
+# Billy is home
+        - condition: state
+          entity_id: input_boolean.billy_home
+          state: 'on'
+# Gina is home
+        - condition: state
+          entity_id: input_boolean.gina_home
+          state: 'on'
+# Family is home
+        - condition: state
+          entity_id: input_boolean.family
+          state: 'on'
+# Company is home
+        - condition: state
+          entity_id: input_boolean.company
+          state: 'on'
+
+  action:
+# Turn on 1 light in the living room
+    - service: switch.turn_on
+      entity_id:
+        - switch.lamp_2
+# Event recorder
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Lights on After Dark Sun"}
+
+###################################################################
+- id: nightlights_off
+###################################################################
+  alias: Nightlights Off
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: sensor.aeotec_zw100_multisensor_6_burglar_6_10
+      from: '8'
+      to: '0'
+
+  action:
+# Turn some bed lights off
+    - service: light.turn_off
+      entity_id:
+        - light.billy_bedside_strip
+        - light.foot_of_bed
+        - light.gina_bedside_strip
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Nightlights Off"}
+
+###################################################################
+- id: nightlights_on
+###################################################################
+  alias: Nightlights On
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: sensor.aeotec_zw100_multisensor_6_burglar_6_10
+      from: '0'
+      to: '8'
+
+  condition:
+    condition: or
+    conditions:
+      - condition: state
+        entity_id: input_select.billy_status
+        state: "sleeping"
+      - condition: state
+        entity_id: input_select.gina_status
+        state: "sleeping"
+# The sun is down
+      - condition: state
+        entity_id: sun.sun
+        state: 'below_horizon'
+# Lights Disable switch is off
+      - condition: state
+        entity_id: input_boolean.lights_disable
+        state: 'off'
+# Only turn lights on if there isnt any light in the room
+      - condition: numeric_state
+        entity_id: sensor.aeotec_zw100_multisensor_6_luminance_6_3
+        above: 1
+
+  action:
+# Turn some bed lights on
+    - service: light.turn_on
+      entity_id:
+        - light.billy_bedside_strip
+        - light.foot_of_bed
+        - light.gina_bedside_strip
+      data:
+        brightness: 1
+        xy_color: [ 0.51305, 0.4207 ]
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Nightlights On"}
+
+###################################################################
+- id: media_mode_off
+###################################################################
+  alias: Media Mode Off
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: input_boolean.media_mode
+      state: 'off'
+
+  action:
+# Arm Security
+    - service: alarm_control_panel.alarm_disarm
+      entity_id: alarm_control_panel.alarm
+# Allow lights to turn on
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.lights_disable
+# Turn off Living room lights and TV
+    - service: switch.turn_on
+      entity_id:
+        - switch.lamp_2
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Media Mode Off"}
+
+###################################################################
+- id: media_mode_on
+###################################################################
+  alias: Media Mode On
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: input_boolean.media_mode
+      state: 'on'
+
+  condition:
+    condition: or
+    conditions:
+      - condition: state
+        entity_id: input_boolean.billy_home
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.gina_home
+        state: 'on'
+      - condition: state
+        entity_id: input_select.billy_status
+        state: "home"
+      - condition: state
+        entity_id: input_select.gina_status
+        state: "home"
+
+  action:
+# Lock Kevo
+    - service: switch.turn_on
+      entity_id: switch.frontdoor_kevo
+# Arm Security
+    - service: alarm_control_panel.alarm_arm_home
+      entity_id: alarm_control_panel.alarm
+# Turn off Living room lights and TV
+    - service: switch.turn_on
+      entity_id:
+        - switch.tv_switch
+# Stop lights from turning back on
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.lights_disable
+# Turn off Living room lights and TV
+    - service: switch.turn_off
+      entity_id:
+        - switch.lamp_1
+        - switch.lamp_2
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Media Mode On"}
+
+###################################################################
+- id: not_home_billy
+###################################################################
+  alias: Not Home Billy
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: input_boolean.billy_home
+      state: 'off'
+
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_boolean.gina_home
+        state: "off"
+      - condition: state
+        entity_id: input_boolean.company
+        state: "off"
+      - condition: state
+        entity_id: input_boolean.vacation_mode
+        state: 'off'
+      - condition: state
+        entity_id: input_boolean.media_playing
+        state: 'off'
+
+  action:
+# Sonos
+    - service: media_player.turn_off
+      entity_id:
+        - group.sonos
+# Lights
+    - service: light.turn_off
+      entity_id:
+        - group.all_lights
+        - light.__level_2_0
+        - light.billy_bedside_strip
+        - light.foot_of_bed
+        - light.gina_bedside_strip
+        - light.head_of_bed
+# Switches
+    - service: switch.turn_off
+      entity_id:
+        - switch.lamp_1
+        - switch.lamp_2
+#          - switch.tv_switch
+# Nest
+#      - service: climate.set_away_mode
+#        entity_id:
+#          - climate.living_room
+#        away_mode: 'on'
+# Lock Kevo
+    - service: switch.turn_on
+      entity_id: switch.frontdoor_kevo
+# Alarm enabled
+    - service: alarm_control_panel.alarm_arm_away
+      entity_id: alarm_control_panel.alarm
+# Change status
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.billy_status
+        option: "away"
+# IFTTT Notification
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Billy Not Home"}
+#      - service: ifttt.trigger
+#        data: {"event":"gina_text", "value1":"Billy", "value2":"Home!"}
+    - service: notify.html5
+      data:
+        title: "Not Home Notification"
+        message: 'No one is home'
+        target: "bills_6p_2"
+        data:
+          tag: 'home_status'
+
+###################################################################
+- id: not_home_gina
+###################################################################
+  alias: Not Home Gina
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: input_boolean.gina_home
+      state: 'off'
+
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_boolean.billy_home
+        state: "off"
+      - condition: state
+        entity_id: input_boolean.company
+        state: "off"
+      - condition: state
+        entity_id: input_boolean.vacation_mode
+        state: 'off'
+      - condition: state
+        entity_id: input_boolean.media_playing
+        state: 'off'
+
+  action:
+# Sonos 
+    - service: media_player.turn_off
+      entity_id:
+        - group.sonos
+# Lights
+    - service: light.turn_off
+      entity_id:
+        - group.all_lights
+        - light.__level_2_0
+        - light.billy_bedside_strip
+        - light.foot_of_bed
+        - light.gina_bedside_strip
+        - light.head_of_bed
+# Switches
+    - service: switch.turn_off
+      entity_id:
+        - switch.lamp_1
+        - switch.lamp_2
+#          - switch.tv_switch
+# Nest
+# Lock Kevo
+    - service: switch.turn_on
+      entity_id: switch.frontdoor_kevo
+# Alarm enabled
+    - service: alarm_control_panel.alarm_arm_away
+      entity_id: alarm_control_panel.alarm
+# Change status
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.billy_status
+        option: "away"
+# IFTTT Notification
+    - service: ifttt.trigger
+      data: {"event":"billy_ifttt", "value1":"No one", "value2":"home"}
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Gina Not Home"}
+    - service: notify.html5
+      data:
+        title: "Not Home Notification"
+        message: 'No one is home'
+        target: "bills_6p_2"
+        data:
+          tag: 'home_status'
+
+###################################################################
+- id: bed_lights_turned_on
+###################################################################
+  alias: Bed Lights Turned On
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: group.all_hue_lights
+      state: 'on'
+
+  action:
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Bed Lights Turned On Mode"}
+# HTML5 Notification
+    - service: notify.html5
+      data:
+        title: "Bed Lights Turned On Notification"
+        message: 'Bed Lights On'
+        target: "bills_6p_2"
+        data:
+          tag: 'bed_lights_automation'
+
+###################################################################
+- id: bryn_mawr_nest_protect_co_emergency
+###################################################################
+# OK Warning Emergency
+  alias: Bryn Mawr Nest Protect CO Emergency
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.upstairs_nest_protect_co_status
+        - sensor.hallway_nest_protect_living_room_co_status
+        - sensor.basement_nest_protect_co_status
+      state: 'Emergency'
+
+  action:
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Bryn Mawr Nest Protect CO Emergency"}
+# HTML5 Notification
+    - service: notify.html5
+      data:
+        title: "Bryn Mawr Nest CO Emergency Notification"
+        message: 'Bryn Mawr Nest Protect CO Emergency'
+        target: "bills_6p_2"
+        data:
+          tag: 'bryn_mawr_nest_automation'
+
+###################################################################
+- id: bryn_mawr_nest_protect_co_warning
+###################################################################
+# OK Warning Emergency
+  alias: Bryn Mawr Nest Protect CO Warning
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.upstairs_nest_protect_co_status
+        - sensor.hallway_nest_protect_living_room_co_status
+        - sensor.basement_nest_protect_co_status
+      state: 'Warning'
+
+  action:
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Bryn Mawr Nest Protect CO Warning"}
+# HTML5 Notification
+    - service: notify.html5
+      data:
+        title: "Bryn Mawr Nest CO Warning Notification"
+        message: 'Bryn Mawr Nest Protect CO Warning'
+        target: "bills_6p_2"
+        data:
+          tag: 'bryn_mawr_nest_automation'
+
+###################################################################
+- id: bryn_mawr_nest_protect_smoke_emergency
+###################################################################
+# OK Warning Emergency
+  alias: Bryn Mawr Nest Protect Smoke Emergency
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.upstairs_nest_protect_smoke_status
+        - sensor.hallway_nest_protect_living_room_smoke_status
+        - sensor.basement_nest_protect_smoke_status
+      state: 'Emergency'
+
+  action:
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Bryn Mawr Nest Protect Smoke Emergency"}
+# HTML5 Notification
+    - service: notify.html5
+      data:
+        title: "Bryn Mawr Nest Smoke Emergency Notification"
+        message: 'Bryn Mawr Nest Protect Smoke Emergency'
+        target: "bills_6p_2"
+        data:
+          tag: 'bryn_mawr_nest_automation'
+
+###################################################################
+- id: bryn_mawr_nest_protect_smoke_warning
+###################################################################
+# OK Warning Emergency
+  alias: Bryn Mawr Nest Protect Smoke Warning
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.upstairs_nest_protect_smoke_status
+        - sensor.hallway_nest_protect_living_room_smoke_status
+        - sensor.basement_nest_protect_smoke_status
+      state: 'Warning'
+
+  action:
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Bryn Mawr Nest Protect Smoke Warning"}
+# HTML5 Notification
+    - service: notify.html5
+      data:
+        title: "Bryn Mawr Nest Smoke Warning Notification"
+        message: 'Bryn Mawr Nest Protect Smoke Warning'
+        target: "bills_6p_2"
+        data:
+          tag: 'bryn_mawr_nest_automation'
+
+###################################################################
+- id: front_door_unlocked
+###################################################################
+  alias: Front Door Unlocked
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: switch.frontdoor_kevo
+      state: 'off'
+      for:
+        minutes: 2
+        seconds: 00
+
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_boolean.billy_home
+        state: 'off'
+      - condition: state
+        entity_id: input_boolean.gina_home
+        state: 'off'
+
+  action:
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Front Door Unlocked"}
+# HTML5 Notification
+    - service: notify.html5
+      data:
+        title: "Front Door Unlocked Notification"
+        message: 'Front Door Unlocked'
+        target: "bills_6p_2"
+        data:
+          tag: 'front_door_unlocked_automation'
+
+###################################################################
+- id: startup_notification
+###################################################################
+  alias: Startup Notification
+  hide_entity: false
+  trigger:
+    - platform: homeassistant
+      event: start
+#      - platform: event
+#        event_type: homeassistant_start
+
+  action:
+#      - service: ifttt.trigger
+#        data: {"event":"billy_ifttt", "value1":"Home Assistant", "value2":"Up and Running"}
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"HA Startup Notification"}
+
+    - service: notify.html5
+      data:
+        title: "Home Assistant"
+        message: 'Home Assistant is up and running'
+        target: "bills_6p_2"
+        data:
+          tag: 'ha_startup_notification'
+    - service: persistent_notification.create
+      data:
+        message: "Red1-Lamp1 on/off=2-Lock Door/Bedtime=3-Go Time On/Off=4-Panic Mode On/Off  Blue1-Lamp1 on/off=2-Lock Door/Bedtime=3-Movie On/Off=4-Panic Mode On/Off"
+        title: "Minimote Buttons"
+        notification_id: "minimote"
+
+###################################################################
+- id: update_available_notification
+###################################################################
+  alias: Update Available Notification
+  hide_entity: True
+  trigger:
+    - platform: state
+      entity_id: updater.updater
+
+#condition:
+#  condition: template
+#  value_template: "{{ states('updater.updater') != 'unknown' }}"
+
+  action:
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"HA Update Available Notification"}
+    - service: notify.html5
+      data_template:
+        target: "bills_6p_2"
+        title: "Update Available"
+        message: "Home Assistant {{ states('updater.updater') }} is available. - {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
+        data:
+          url: "https://home-assistant.io/getting-started/installation-raspberry-pi-all-in-one/#upgrading"
+
+    - service: persistent_notification.create
+      data:
+        title: "Update Available"
+        message: "Home Assistant {{ states('updater.updater') }} is available. - {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
+        notification_id: "update_available"
+
+###################################################################
+- id: liberty_nest_protect_co_emergency
+###################################################################
+# OK Warning Emergency
+  alias: Liberty Nest Protect CO Emergency
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.stairs_up_nest_protect_co_status
+      state: 'Emergency'
+
+  action:
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Liberty Nest Protect CO Emergency"}
+# HTML5 Notification
+    - service: notify.html5
+      data:
+        title: "Liberty Nest CO Emergency Notification"
+        message: 'Liberty Nest Protect CO Emergency'
+        target: "bills_6p_2"
+        data:
+          tag: 'liberty_nest_automation'
+
+###################################################################
+- id: liberty_nest_protect_co_warning
+###################################################################
+# OK Warning Emergency
+  alias: Liberty Nest Protect CO Warning
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.stairs_up_nest_protect_co_status
+      state: 'Warning'
+
+  action:
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Liberty Nest Protect CO Warning"}
+# HTML5 Notification
+    - service: notify.html5
+      data:
+        title: "Liberty Nest CO Warning Notification"
+        message: 'Liberty Nest Protect CO Warning'
+        target: "bills_6p_2"
+        data:
+          tag: 'liberty_nest_automation'
+
+###################################################################
+- id: liberty_nest_protect_smoke_emergency
+###################################################################
+# OK Warning Emergency
+  alias: Liberty Nest Protect Smoke Emergency
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.stairs_up_nest_protect_smoke_status
+      state: 'Emergency'
+
+  action:
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Liberty Nest Protect Smoke Emergency"}
+# HTML5 Notification
+    - service: notify.html5
+      data:
+        title: "Liberty Nest Smoke Emergency Notification"
+        message: 'Liberty Nest Protect Smoke Emergency'
+        target: "bills_6p_2"
+        data:
+          tag: 'liberty_nest_automation'
+
+###################################################################
+- id: liberty_nest_protect_smoke_warning
+###################################################################
+# OK Warning Emergency
+  alias: Liberty Nest Protect Smoke Warning
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.stairs_up_nest_protect_smoke_status
+      state: 'Warning'
+
+  action:
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Liberty Nest Protect Smoke Warning"}
+# HTML5 Notification
+    - service: notify.html5
+      data:
+        title: "Liberty Nest Smoke Warning Notification"
+        message: 'Liberty Nest Protect Smoke Warning'
+        target: "bills_6p_2"
+        data:
+          tag: 'liberty_nest_automation'
+
+###################################################################
+- id: login_failure
+###################################################################
+  alias: Login Failure
+  hide_entity: True
+  trigger:
+    - platform: template
+      value_template: "{{ states('persistent_notification.httplogin') != 'unknown' }}"
+
+  action:
+#      - service: ifttt.trigger
+#        data: {"event":"billy_ifttt", "value1":"Someone", "value2":"failing to login!"}
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Login Failure"}
+# HTML5 Notification
+    - service: notify.html5
+      data:
+        title: "Login Notification"
+        message: 'Someone is failing to login'
+        target: "bills_6p_2"
+        data:
+          tag: 'login_automation'
+
+###################################################################
+- id: billy_low_battery
+###################################################################
+  alias: Billy Low Battery
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.bills_6p_battery
+      below: 25
+
+  action:
+    - service: script.low_battery
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Low Battery"}
+    - service: notify.html5
+      data:
+        title: "Low Battery Notification"
+        message: 'Billys phone has a low battery'
+        target: "bills_6p_2"
+        data:
+          tag: 'low_battery_automation'
+#      - service: notify.html5
+#        data:
+#          title: "Low Battery Notification"
+#          message: 'Billys phone has a low battery'
+#          target: "ginas_s6"
+#          data:
+#            tag: 'low_battery_automation'
+
+###################################################################
+- id: panic_mode_on
+###################################################################
+  alias: Panic Mode
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: input_boolean.panic_mode
+      state: 'on'
+
+  action:
+    - service: switch.turn_on
+      entity_id:
+        - switch.lamp_1
+        - switch.lamp_2
+    - service: light.turn_on
+      entity_id:
+        - light.__level_2_0
+    - service: script.panic1
+#      - service: ifttt.trigger
+#        data: {"event":"billy_ifttt", "value1":"Panic Button", "value2":"pushed!"}
+    - service: ifttt.trigger
+      data: {"event":"gina_text", "value1":"Panic Button", "value2":"pushed!"}
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Panic Mode"}
+    - service: notify.html5
+      data:
+        title: "Panic Notification"
+        message: 'Panic Button Pressed!'
+        target: "bills_6p_2"
+        data:
+          tag: 'panic_automation'
+
+###################################################################
+- id: panic_mode_off
+###################################################################
+  alias: Panic Mode Off
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: input_boolean.panic_mode
+      state: 'off'
+
+  action:
+    - service: script.turn_off
+      entity_id:
+        - script.panic1
+        - script.panic2
+# Lights
+    - service: light.turn_off
+      entity_id:
+        - group.bed_lights
+        - light.__level_2_0
+# WEMO Switches
+    - service: switch.turn_off
+      entity_id:
+        - group.all_switches
+#      - service: ifttt.trigger
+#        data: {"event":"billy_ifttt", "value1":"Home", "value2":"all clear!"}
+    - service: ifttt.trigger
+      data: {"event":"gina_text", "value1":"Home", "value2":"all clear!"}
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Panic Mode Off"}
+    - service: notify.html5
+      data:
+        title: "Panic Notification"
+        message: 'Panic Button Cleared'
+        target: "bills_6p_2"
+        data:
+          tag: 'panic_automation'
+
+###################################################################
+- id: presence_billy_is_home
+###################################################################
+  alias: Presence Billy Is Home
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: group.billy_devices
+      state: home
+    
+  condition:
+    - condition: state
+      entity_id: input_boolean.billy_home
+      state: 'off'
+    - condition: template
+      value_template: >
+        {%- if states.input_boolean.billy_home.last_changed -%}
+          {{ (as_timestamp(now()) - as_timestamp(states.input_boolean.billy_home.last_changed)) > 600 }}
+        {%- else -%}
+          true
+        {%- endif -%}
+
+  action:
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.billy_home
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Presence Billy Is Home"}
+# IFTTT Notification
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Billy Is Home - MQTT"}
+
+
+###################################################################
+- id: presence_billy_is_not_home
+###################################################################
+  alias: Presence Billy Not Home
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: group.billy_devices
+      from: home
+      to: not_home
+
+  action:
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.billy_home
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Presence Billy Not Home"}
+# IFTTT Notification
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Billy Not Home - MQTT"}
+
+###################################################################
+- id: presence_chromecast_idle
+###################################################################
+  alias: Presence Chromecast Idle
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: media_player.living_room_2
+      state: 'idle'
+
+  action:
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.media_playing
+# IFTTT Notification
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Presence Chromecast is Idle"}
+
+###################################################################
+- id: presence_chromecast_idle
+###################################################################
+  alias: Presence Chromecast Off
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: media_player.living_room_2
+      state: 'off'
+
+  action:
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.media_playing
+# IFTTT Notification
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Presence Chromecast is Off"}
+
+###################################################################
+- id: presence_chromecast_running
+###################################################################
+  alias: Presence Chromecast running
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: media_player.living_room_2
+      state: 'playing'
+
+  action:
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.media_playing
+# IFTTT Notification
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Presence Chromecast is Running"}
+
+###################################################################
+- id: presence_family_is_home
+###################################################################
+  alias: Presence Family Is Home
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: device_tracker.tim_maxx, device_tracker.mom_6p
+#        from: not_home
+      to: home
+
+  action:
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.family
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Presence Family Is Home"}
+# IFTTT Notification
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Family Is Home"}
+
+###################################################################
+- id: presence_family_is_not_home
+###################################################################
+  alias: Presence Family Not Home
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: device_tracker.tim_maxx, device_tracker.mom_6p
+      from: home
+      to: not_home
+
+  action:
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.family
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Presence Family Not Home"}
+# IFTTT Notification
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Presence Family Not Home"}
+
+###################################################################
+- id: presence_gina_is_home
+###################################################################
+  alias: Presence Gina Is Home
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: device_tracker.ginas_s6
+      from: not_home
+      to: home
+
+  action:
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.gina_home
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Presence Gina Is Home"}
+
+###################################################################
+- id: presence_gina_is_not_home
+###################################################################
+  alias: Presence Gina Not Home 
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: device_tracker.ginas_s6
+      from: home
+      to: not_home
+
+  action:
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.gina_home
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Presence Gina Not Home"}
+
+###################################################################
+- id: presence_living_room_tv_idle
+###################################################################
+  alias: Presence Living Room TV Idle
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: media_player.living_room_tv
+      state: 'idle'
+
+  action:
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.media_playing
+# IFTTT Notification
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Presence Living Room TV is Idle"}
+
+###################################################################
+- id: presence_living_room_tv_off
+###################################################################
+  alias: Presence Living Room TV Off
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: media_player.living_room_tv
+      state: 'off'
+
+  action:
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.media_playing
+# IFTTT Notification
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Presence Living Room TV is Off"}
+
+###################################################################
+- id: presence_living_room_tv_running
+###################################################################
+  alias: Presence Living Room TV running
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: media_player.living_room_tv
+      state: 'playing'
+      for: 1
+
+  action:
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.media_playing
+# IFTTT Notification
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Presence Living Room TV is Running"}
+
+###################################################################
+- id: reset_bedtime_switch
+###################################################################
+  alias: Reset Bedtime Switch
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: input_boolean.bedtime
+      from: 'off'
+      to: 'on'
+      for:
+        hours: 0
+        minutes: 03
+        seconds: 00
+
+  action:
+# Turn off the Bedtime switch
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.bedtime
+# Turn off the tasker switch
+    - service: switch.turn_off
+      entity_id: switch.sleepytime_tasker
+# Trigger the event recorder
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Reset Bedtime Switch"}
+
+###################################################################
+- id: reset_lights_disable_switch
+###################################################################
+  alias: Reset Lights Disable Switch
+  hide_entity: false
+  trigger:
+    - platform: time
+      minutes: '/60'
+      seconds: '00'
+
+  condition:
+    - condition: time
+      after: '01:00'
+      before: '15:00'
+    - condition: state
+      entity_id: input_boolean.lights_disable
+      state: 'on'
+
+  action:
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.lights_disable
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Reset Lights Disable Switch"}
+
+###################################################################
+- id: sexy_time_on
+###################################################################
+  alias: Sexy Time
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id:
+        - input_boolean.sexy_time
+      state: 'on'  
+
+  action:
+# Start Bed lights
+    - service: script.bed_colorloop
+# Lock Kevo
+    - service: switch.turn_on
+      entity_id: switch.frontdoor_kevo
+#      - service: ifttt.trigger
+#        data: {"event":"billy_ifttt", "value1":"Sexy Time!"}
+# Event Recorder
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Sexy Time"}
+# Notify Billy
+    - service: notify.html5
+      data:
+        title: "Sexy Time Notification"
+        message: 'Sexy Time Automation started'
+        target: "bills_6p_2"
+        data:
+          tag: 'sexytime_automation'
+
+###################################################################
+- id: sexy_time_off
+###################################################################
+  alias: Sexy Time Off
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id:
+        - input_boolean.sexy_time
+      state: 'off'
+
+  action:
+    - service: script.turn_off
+      entity_id:
+        - script.bed_colorloop
+# Hue Lights
+    - service: light.turn_off
+      entity_id:
+        - group.bed_lights
+#      - service: ifttt.trigger
+#        data: {"event":"billy_ifttt", "value1":"Sexy Time", "value2":"off!"}
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Sexy Time Off"}
+    - service: notify.html5
+      data:
+        title: "Sexy Time Notification"
+        message: 'Sexy Time Automation stopped'
+        target: "bills_6p_2"
+        data:
+          tag: 'sexytime_automation'
+
+###################################################################
+- id: start_sonos_playlist_jesus_music
+###################################################################
+  alias: Start Sonos Playlist Jesus Music
+  trigger:
+    - platform: state
+      entity_id: input_select.sonos_playlist
+      state: "Jesus Music"
+
+  action:
+    - service: shell_command.sonos_playlist_jesus_music
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Start Sonos Playlist Jesus Music"}
+#      - service: ifttt.trigger
+#        data: {"event":"billy_ifttt", "value1":"{{states.input_select.sonos_playlist.state.lower().replace(" ", "").replace("-", "")}}"}
+#      - service: ifttt.trigger
+#        data: {"event":"gina_text", "value1":"Billy", "value2":"Home!"}
+
+###################################################################
+- id: start_sonos_playlist_pick_one
+###################################################################
+  alias: Start Sonos Playlist Pick One
+  trigger:
+    - platform: state
+      entity_id: input_select.sonos_playlist
+      state: "Pick one"
+
+  action:
+    - service: media_player.turn_off
+      entity_id:
+        - group.sonos
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Start Sonos Playlist Pick One"}
+#      - service: ifttt.trigger
+#        data: {"event":"billy_ifttt", "value1":"{{states.input_select.sonos_playlist.state.lower().replace(" ", "").replace("-", "")}}"}
+#      - service: ifttt.trigger
+#        data: {"event":"gina_text", "value1":"Billy", "value2":"Home!"}
+
+###################################################################
+- id: start_sonos_playlist_sleepy_time
+###################################################################
+  alias: Start Sonos Playlist Sleepy Time
+  trigger:
+    - platform: state
+      entity_id: input_select.sonos_playlist
+      state: "Sleepy time"
+
+  action:
+    - service: shell_command.sonos_playlist_sleepy_time
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Start Sonos Playlist Sleepy Time"}
+#      - service: ifttt.trigger
+#        data: {"event":"billy_ifttt", "value1":"{{states.input_select.sonos_playlist.state.lower().replace(" ", "").replace("-", "")}}"}
+#      - service: ifttt.trigger
+#        data: {"event":"gina_text", "value1":"Billy", "value2":"Home!"}
+
+###################################################################
+- id: vacation_mode
+###################################################################
+  alias: Vacation Mode
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: input_boolean.vacation_mode
+      state: 'on'
+
+#    condition:
+#      condition: or
+#      conditions:
+#        - condition: state
+#          entity_id: input_boolean.billy_home
+#          state: 'on'
+#        - condition: state
+#          entity_id: input_boolean.gina_home
+#          state: 'on'
+
+  action:
+# Turn Upstairs lights on
+#      - service: light.turn_on
+#        entity_id:
+#          - group.bed_lights
+#        data:
+#          brightness: 30
+#          xy_color: [ 0.4571, 0.4453 ]
+# Wait 3 minutes
+#      - delay: 00:03:00
+# Turn off Living room lights and TV
+    - service: switch.turn_on
+      entity_id:
+        - switch.lamp_1
+# Stop lights from turning back on
+#      - service: homeassistant.turn_on
+#        entity_id: input_boolean.lights_disable
+# Arm Security
+#      - service: alarm_control_panel.alarm_arm_home
+#        entity_id: alarm_control_panel.alarm
+# Lock Kevo
+#      - service: switch.turn_on
+#        entity_id: switch.frontdoor_kevo
+# Start Tasker Sleepy Time
+#      - service: switch.turn_on
+#        entity_id: switch.sleepytime_tasker
+# Start Sleepytime on bedroom Sonos
+#      - service: script.bedtime_music
+#      - service: shell_command.sonos_playlist_sleepy_time
+# Turn off bedlights
+#      - service: light.turn_off
+#        entity_id:
+#          - group.bed_lights
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Vacation Mode"}
+# HTML5 Notification
+    - service: notify.html5
+      data:
+        title: "Vacation Mode Notification"
+        message: 'Vacation Mode Started'
+        target: "bills_6p_2"
+        data:
+          tag: 'vacation_mode_automation'
+
+###################################################################
+- id: vacation_mode_on_after_24_hours
+###################################################################
+  alias: Vacation Mode On After 24 hours
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: group.household
+      from: 'on'
+      to: 'off'
+      for:
+        hours: 24
+        minutes: 0
+        seconds: 0
+
+  action:
+# Turn Upstairs lights on
+#      - service: light.turn_on
+#        entity_id:
+#          - group.bed_lights
+#        data:
+#          brightness: 30
+#          xy_color: [ 0.4571, 0.4453 ]
+# Wait 3 minutes
+#      - delay: 00:03:00
+# Turn off Living room lights and TV
+#      - service: switch.turn_on
+#        entity_id:
+#          - switch.lamp_1
+# Stop lights from turning back on
+#      - service: homeassistant.turn_on
+#        entity_id: input_boolean.lights_disable
+# Arm Security
+#      - service: alarm_control_panel.alarm_arm_home
+#        entity_id: alarm_control_panel.alarm
+# Lock Kevo
+#      - service: switch.turn_on
+#        entity_id: switch.frontdoor_kevo
+# Start Tasker Sleepy Time
+#      - service: switch.turn_on
+#        entity_id: switch.sleepytime_tasker
+# Start Sleepytime on bedroom Sonos
+#      - service: script.bedtime_music
+#      - service: shell_command.sonos_playlist_sleepy_time
+# Turn off bedlights
+#      - service: light.turn_off
+#        entity_id:
+#          - group.bed_lights
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Vacation Mode On After 24 hours"}
+# HTML5 Notification
+    - service: notify.html5
+      data:
+        title: "Vacation Mode Notification"
+        message: 'Vacation Mode On After 24 hours'
+        target: "bills_6p_2"
+        data:
+          tag: 'vacation_mode_automation'
+
+###################################################################
+- id: billy_wake_up
+###################################################################
+  alias: Billy wake up
+  hide_entity: false
+# Start at 5am
+  trigger:
+    - platform: time
+      after: '05:00:00'
+
+# when Billy is home
+# and when it is Mon-Fri or Sun
+# and when work override is off
+# and when vacation mode is off
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_boolean.billy_home
+        state: 'on'
+      - condition: time
+        weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+          - sun
+      - condition: state
+        entity_id: input_boolean.no_work
+        state: 'off'
+      - condition: state
+        entity_id: input_boolean.vacation_mode
+        state: 'off'
+
+  action:
+# Turn some bed lights on
+    - service: light.turn_on
+      entity_id:
+        - light.billy_bedside_strip
+        - light.foot_of_bed
+      data:
+        brightness: 10
+        xy_color: [ 0.51305, 0.4207 ]
+# Group all the Sonos
+    - service: media_player.sonos_join
+      data:
+        master: media_player.bedroom
+      entity_id:
+        - media_player.kitchen
+        - media_player.living_room
+        - media_player.playroom
+# Event Recorder
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Billy wake up"}
+#      - service: shell_command.sonos_playlist_jesus_music
+# 5:10am
+    - delay: 00:10:00
+# Turn up bed lights
+    - service: light.turn_on
+      entity_id:
+        - light.billy_bedside_strip
+        - light.foot_of_bed
+      data:
+        brightness: 20
+        xy_color: [ 0.5369, 0.4479 ]
+# 5:20am
+    - delay: 00:10:00
+# Turn up bed lights
+    - service: light.turn_on
+      entity_id:
+        - light.billy_bedside_strip
+        - light.foot_of_bed
+      data:
+        brightness: 30
+        xy_color: [ 0.4571, 0.4453 ]
+# 5:30am
+    - delay: 00:10:00
+# Turn up bed lights
+    - service: light.turn_on
+      entity_id:
+        - light.billy_bedside_strip
+        - light.foot_of_bed
+      data:
+        brightness: 255
+        xy_color: [ 0.329, 0.35 ]
+# Turn on living room lamp
+    - service: switch.turn_on
+      entity_id:
+        - switch.lamp_2
+# 5:40am
+    - delay: 00:10:00
+# Turn on kitchen lights
+    - service: light.turn_on
+      entity_id:
+        - light.__level_2_0
+# 6:00am
+    - delay: 00:20:00
+# Disarm alarm system
+    - service: alarm_control_panel.alarm_disarm
+      entity_id: alarm_control_panel.alarm
+
+###################################################################
+- id: gina_wake_up
+###################################################################
+  alias: "Gina wake up"
+  hide_entity: false
+  trigger:
+    - platform: time
+      after: '06:00:00'
+
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_boolean.gina_home
+        state: 'on'
+      - condition: time
+        weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+      - condition: state
+        entity_id: input_boolean.no_work
+        state: 'off'
+      - condition: state
+        entity_id: input_boolean.vacation_mode
+        state: 'off'
+
+  action:
+# Turn some bed lights on
+    - service: light.turn_on
+      entity_id:
+        - light.gina_bedside_strip
+        - light.foot_of_bed
+      data:
+        brightness: 10
+        xy_color: [ 0.51305, 0.4207 ]
+# Event Recorder
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Gina Wake Up"}
+#6:10am
+    - delay: 00:10:00
+# Turn up bed lights
+    - service: light.turn_on
+      entity_id:
+        - light.gina_bedside_strip
+        - light.foot_of_bed
+      data:
+        brightness: 20
+        xy_color: [ 0.5369, 0.4479 ]
+#6:20am
+    - delay: 00:10:00
+# Turn up bed lights
+    - service: light.turn_on
+      entity_id:
+        - light.gina_bedside_strip
+        - light.foot_of_bed
+      data:
+        brightness: 30
+        xy_color: [ 0.4571, 0.4453 ]
+#6:30am
+    - delay: 00:10:00
+# Turn up bed lights
+    - service: light.turn_on
+      entity_id:
+        - light.gina_bedside_strip
+        - light.foot_of_bed
+      data:
+        brightness: 255
+        xy_color: [ 0.329, 0.35 ]
+# Disarm alarm system
+    - service: alarm_control_panel.alarm_disable
+      entity_id: alarm_control_panel.alarm
+#6:59am
+    - delay: 00:29:00
+    - service: light.turn_off
+      entity_id:
+        - light.gina_bedside_strip
+        - light.foot_of_bed
+
+###################################################################
+- id: wake_up_no_work
+###################################################################
+  alias: Wake Up No Work
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: sensor.aeotec_zw100_multisensor_6_burglar_6_10
+      from: '0'
+      to: '8'
+
+# when Billy is home
+# and when it is Mon-Fri or Sun
+# and when work override is on
+# and when vacation mode is off
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_boolean.billy_home
+        state: 'on'
+      - condition: time
+        weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+          - sun
+      - condition: state
+        entity_id: input_boolean.no_work
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.vacation_mode
+        state: 'off'
+
+  action:
+# Turn some bed lights on
+    - service: light.turn_on
+      entity_id:
+      - light.billy_bedside_strip
+        - light.foot_of_bed
+      data:
+        brightness: 10
+        xy_color: [ 0.51305, 0.4207 ]
+# Group all the Sonos
+    - service: media_player.sonos_join
+      data:
+        master: media_player.bedroom
+      entity_id:
+        - media_player.kitchen
+        - media_player.living_room
+        - media_player.playroom
+# Event Recorder
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Billy wake up"}
+# Start Music
+    - service: shell_command.sonos_playlist_jesus_music
+# Turn on living room lamp
+    - service: switch.turn_on
+      entity_id:
+        - switch.lamp_2
+# Turn on kitchen lights
+    - service: light.turn_on
+      entity_id:
+        - light.__level_2_0
+# Disarm alarm system
+    - service: alarm_control_panel.alarm_disarm
+      entity_id: alarm_control_panel.alarm
+# Reset the No Work switch
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.no_work
+
+###################################################################
+- id: minimote_blue_button_1_long_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Blue Button 1 Long Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_7
+        scene_id: 2
+
+  action:
+# Let lights turn back on
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.lights_disable
+# Turn off Living room lights and TV
+    - service: switch.turn_off
+      entity_id:
+        - switch.lamp_1
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Blue Button 1 Long Press"}
+
+###################################################################
+- id: minimote_blue_button_1_short_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Blue Button 1 Short Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_7
+        scene_id: 1
+
+  action:
+# Stop lights from turning back on
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.lights_disable
+# Turn off Living room lights and TV
+    - service: switch.turn_on
+      entity_id:
+        - switch.lamp_1
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Blue Button 1 Short Press"}
+
+###################################################################
+- id: minimote_blue_button_2_long_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Blue Button 2 Long Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_7
+        scene_id: 4
+
+  action:
+# Start Bedtime Automation
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.bedtime
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Blue Button 2 Long Press"}
+
+###################################################################
+- id: minimote_blue_button_2_short_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Blue Button 2 Short Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_7
+        scene_id: 3
+
+  action:
+# Lock front door
+    - service: switch.turn_on
+      entity_id:
+        - switch.frontdoor_kevo
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Blue Button 2 Short Press"}
+
+###################################################################
+- id: minimote_blue_button_3_long_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Blue Button 3 Long Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_7
+        scene_id: 6
+
+  action:
+# Stop Sexy time automation
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.media_mode
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Blue Button 3 Long Press"}
+
+###################################################################
+- id: minimote_blue_button_3_short_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Blue Button 3 Short Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_7
+        scene_id: 5
+
+  action:
+# Start Sexy time automation
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.media_mode
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Blue Button 3 Short Press"}
+
+###################################################################
+- id: minimote_blue_button_4_long_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Blue Button 4 Long Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_7
+        scene_id: 8
+
+  action:
+# Turn Panic mode off
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.panic_mode
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Blue Button 4 Long Press"}
+
+###################################################################
+- id: minimote_blue_button_4_short_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Blue Button 4 Short Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_7
+        scene_id: 7
+
+  action:
+# Turn Panic mode on
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.panic_mode
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Blue Button 4 Short Press"}
+
+###################################################################
+- id: minimote_green_button_1_long_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Green Button 1 Long Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_9
+        scene_id: 2
+
+  action:
+# Let lights turn back on
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.lights_disable
+# Turn off Living room lights and TV
+    - service: switch.turn_off
+      entity_id:
+        - switch.lamp_1
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Green Button 1 Long Press"}
+
+###################################################################
+- id: minimote_green_button_1_short_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Green Button 1 Short Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_9
+        scene_id: 1
+
+  action:
+# Stop lights from turning back on
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.lights_disable
+# Turn off Living room lights and TV
+    - service: switch.turn_on
+      entity_id:
+        - switch.lamp_1
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Green Button 1 Short Press"}
+
+###################################################################
+- id: minimote_green_button_2_long_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Green Button 2 Long Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_9
+        scene_id: 4
+
+  action:
+# Start Bedtime Automation
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.bedtime
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Green Button 2 Long Press"}
+
+###################################################################
+- id: minimote_green_button_2_short_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Green Button 2 Short Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_9
+        scene_id: 3
+
+  action:
+# Lock front door
+    - service: switch.turn_on
+      entity_id:
+        - switch.frontdoor_kevo
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Green Button 2 Short Press"}
+
+###################################################################
+- id: minimote_green_button_3_long_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Green Button 3 Long Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_9
+        scene_id: 6
+
+  action:
+# Stop Sexy time automation
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.sexy_time
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Green Button 3 Long Press"}
+
+###################################################################
+- id: minimote_green_button_3_short_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Green Button 3 Short Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_9
+        scene_id: 5
+
+  action:
+# Start Sexy time automation
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.sexy_time
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Green Button 3 Short Press"}
+
+###################################################################
+- id: minimote_green_button_4_long_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Green Button 4 Long Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_9
+        scene_id: 8
+
+  action:
+# Turn Panic mode off
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.panic_mode
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Green Button 4 Long Press"}
+
+###################################################################
+- id: minimote_green_button_4_short_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Green Button 4 Short Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_9
+        scene_id: 7
+
+  action:
+# Turn Panic mode on
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.panic_mode
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Green Button 4 Short Press"}
+
+###################################################################
+- id: minimote_red_button_1_long_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Red Button 1 Long Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_5
+        scene_id: 2
+
+  action:
+# Let lights turn back on
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.lights_disable
+# Turn off Living room lights and TV
+    - service: switch.turn_off
+      entity_id:
+        - switch.lamp_1
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Red Button 1 Long Press"}
+
+###################################################################
+- id: minimote_red_button_1_short_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Red Button 1 Short Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_5
+        scene_id: 1
+
+  action:
+# Stop lights from turning back on
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.lights_disable
+# Turn off Living room lights and TV
+    - service: switch.turn_on
+      entity_id:
+        - switch.lamp_1
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Red Button 1 Short Press"}
+
+###################################################################
+- id: minimote_red_button_2_long_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Red Button 2 Long Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_5
+        scene_id: 4
+
+  action:
+# Start Bedtime Automation
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.bedtime
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Red Button 2 Long Press"}
+
+###################################################################
+- id: minimote_red_button_2_short_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Red Button 2 Short Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_5
+        scene_id: 3
+
+  action:
+# Lock front door
+    - service: switch.turn_on
+      entity_id:
+        - switch.frontdoor_kevo
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Red Button 2 Short Press"}
+
+###################################################################
+- id: minimote_red_button_3_long_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Red Button 3 Long Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_5
+        scene_id: 6
+
+  action:
+# Stop Sexy time automation
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.sexy_time
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Red Button 3 Long Press"}
+
+###################################################################
+- id: minimote_red_button_3_short_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Red Button 3 Short Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_5
+        scene_id: 5
+
+  action:
+# Start Sexy time automation
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.sexy_time
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Red Button 3 Short Press"}
+
+###################################################################
+- id: minimote_red_button_4_long_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Red Button 4 Long Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_5
+        scene_id: 8
+
+  action:
+# Turn Panic mode off
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.panic_mode
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Red Button 4 Long Press"}
+
+###################################################################
+- id: minimote_red_button_4_short_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Red Button 4 Short Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_5
+        scene_id: 7
+
+  action:
+# Turn Panic mode on
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.panic_mode
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Red Button 4 Short Press"}
+
+###################################################################
+- id: minimote_yellow_button_1_long_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Yellow Button 1 Long Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_8
+        scene_id: 2
+
+  action:
+# Let lights turn back on
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.lights_disable
+# Turn off Living room lights and TV
+    - service: switch.turn_off
+      entity_id:
+        - switch.lamp_1
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Yellow Button 1 Long Press"}
+
+###################################################################
+- id: minimote_yellow_button_1_short_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Yellow Button 1 Short Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_8
+        scene_id: 1
+
+  action:
+# Stop lights from turning back on
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.lights_disable
+# Turn off Living room lights and TV
+    - service: switch.turn_on
+      entity_id:
+        - switch.lamp_1
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Yellow Button 1 Short Press"}
+
+###################################################################
+- id: minimote_yellow_button_2_long_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Yellow Button 2 Long Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_8
+        scene_id: 4
+
+  action:
+# Start Bedtime Automation
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.bedtime
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Yellow Button 2 Long Press"}
+
+###################################################################
+- id: minimote_yellow_button_2_short_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Yellow Button 2 Short Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_8
+        scene_id: 3
+
+  action:
+# Lock front door
+    - service: switch.turn_on
+      entity_id:
+        - switch.frontdoor_kevo
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Yellow Button 2 Short Press"}
+
+###################################################################
+- id: minimote_yellow_button_3_long_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Yellow Button 3 Long Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_8
+        scene_id: 6
+
+  action:
+# Stop Sexy time automation
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.sexy_time
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Yellow Button 3 Long Press"}
+
+###################################################################
+- id: minimote_yellow_button_3_short_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Yellow Button 3 Short Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_8
+        scene_id: 5
+
+  action:
+# Start Sexy time automation
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.sexy_time
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Yellow Button 3 Short Press"}
+
+###################################################################
+- id: minimote_yellow_button_4_long_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Yellow Button 4 Long Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_8
+        scene_id: 8
+
+  action:
+# Turn Panic mode off
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.panic_mode
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Yellow Button 4 Long Press"}
+
+###################################################################
+- id: minimote_yellow_button_4_short_press
+###################################################################
+# Bedroom Minimote
+  alias: Minimote Yellow Button 4 Short Press
+  hide_entity: false
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: aeotec_dsa03202_minimote_8
+        scene_id: 7
+
+  action:
+# Turn Panic mode on
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.panic_mode
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Minimote Yellow Button 4 Short Press"}
