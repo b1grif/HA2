@@ -166,7 +166,7 @@ kitchen:
   view: false
   entities:
   - media_player.kitchen
-  - light.__level_2_0
+  - light.level
 basement:
   name: Basement
   view: false
@@ -294,8 +294,6 @@ default_view:
   - group.master_control
   - group.on_demand
   - group.automation_override
-  - device_tracker.ginas_s6
-  - device_tracker.mosquitto_billsphone
   - group.system_monitor
   - group.bandwidth
   - climate.living_room
@@ -314,6 +312,7 @@ billy_devices:
   name: Billy Mobile Devices
   view: false
   entities:
+  - device_tracker.nexus6p
   - device_tracker.mosquitto_billsphone
   - device_tracker.billy_6p
 gina_devices:

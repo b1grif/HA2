@@ -6,7 +6,7 @@
   trigger:
     - platform: state
       entity_id: binary_sensor.aeotec_zw112_door_window_sensor_6_sensor_3_0
-      state: 'on'
+      to: 'on'
 
   condition:
     condition: and
@@ -39,7 +39,7 @@
   trigger:
     - platform: state
       entity_id: alarm_control_panel.alarm
-      state: 'triggered'
+      to: 'triggered'
 
   action:
 # Notifications
@@ -145,10 +145,10 @@
   trigger:
     - platform: state
       entity_id: input_boolean.billy_home
-      state: 'on'
+      to: 'on'
     - platform: state
       entity_id: input_select.billy_status
-      state: "home"
+      to: "home"
 
   condition:
     - condition: time
@@ -194,7 +194,7 @@
   trigger:
     - platform: state
       entity_id: input_boolean.billy_home
-      state: 'on'
+      to: 'on'
 
   condition:
     - condition: time
@@ -282,7 +282,7 @@
   trigger:
     - platform: state
       entity_id: input_boolean.family
-      state: 'on'
+      to: 'on'
         
   condition:
     - condition: time
@@ -318,7 +318,7 @@
   trigger:
     - platform: state
       entity_id: input_boolean.family
-      state: 'on'
+      to: 'on'
 
   condition:
     - condition: time
@@ -355,7 +355,7 @@
   trigger:
     - platform: state
       entity_id: input_boolean.gina_home
-      state: 'on'
+      to: 'on'
 
   condition:
     - condition: time
@@ -396,7 +396,7 @@
   trigger:
     - platform: state
       entity_id: input_boolean.gina_home
-      state: 'on'
+      to: 'on'
 
   condition:
     - condition: time
@@ -437,7 +437,7 @@
   trigger:
     - platform: state
       entity_id: input_boolean.bedtime
-      state: 'on'
+      to: 'on'
 
   condition:
     condition: or
@@ -596,7 +596,7 @@
   trigger:
     - platform: state
       entity_id: input_boolean.billy_home, input_boolean.gina_home, input_boolean.family, input_boolean.company
-      state: 'on'
+      to: 'on'
 
   condition:
     condition: and
@@ -676,7 +676,7 @@
   trigger:
     - platform: state
       entity_id: input_boolean.billy_home, input_boolean.gina_home, input_boolean.family, input_boolean.company
-      state: 'on'
+      to: 'on'
 
   condition:
     condition: and
@@ -831,7 +831,7 @@
   trigger:
     - platform: state
       entity_id: input_boolean.media_mode
-      state: 'off'
+      to: 'off'
 
   action:
 # Arm Security
@@ -856,7 +856,7 @@
   trigger:
     - platform: state
       entity_id: input_boolean.media_mode
-      state: 'on'
+      to: 'on'
 
   condition:
     condition: or
@@ -905,7 +905,7 @@
   trigger:
     - platform: state
       entity_id: input_boolean.billy_home
-      state: 'off'
+      to: 'off'
 
   condition:
     condition: and
@@ -931,7 +931,7 @@
 # Lights
     - service: light.turn_off
       entity_id:
-        - group.all_lights
+#        - group.all_lights
         - light.__level_2_0
         - light.billy_bedside_strip
         - light.foot_of_bed
@@ -980,7 +980,7 @@
   trigger:
     - platform: state
       entity_id: input_boolean.gina_home
-      state: 'off'
+      to: 'off'
 
   condition:
     condition: and
@@ -1051,7 +1051,7 @@
   trigger:
     - platform: state
       entity_id: group.all_hue_lights
-      state: 'on'
+      to: 'on'
 
   action:
 # Event Recorder spreadsheet
@@ -1078,7 +1078,7 @@
         - sensor.upstairs_nest_protect_co_status
         - sensor.hallway_nest_protect_living_room_co_status
         - sensor.basement_nest_protect_co_status
-      state: 'Emergency'
+      to: 'Emergency'
 
   action:
 # Event Recorder spreadsheet
@@ -1105,7 +1105,7 @@
         - sensor.upstairs_nest_protect_co_status
         - sensor.hallway_nest_protect_living_room_co_status
         - sensor.basement_nest_protect_co_status
-      state: 'Warning'
+      to: 'Warning'
 
   action:
 # Event Recorder spreadsheet
@@ -1132,7 +1132,7 @@
         - sensor.upstairs_nest_protect_smoke_status
         - sensor.hallway_nest_protect_living_room_smoke_status
         - sensor.basement_nest_protect_smoke_status
-      state: 'Emergency'
+      to: 'Emergency'
 
   action:
 # Event Recorder spreadsheet
@@ -1159,7 +1159,7 @@
         - sensor.upstairs_nest_protect_smoke_status
         - sensor.hallway_nest_protect_living_room_smoke_status
         - sensor.basement_nest_protect_smoke_status
-      state: 'Warning'
+      to: 'Warning'
 
   action:
 # Event Recorder spreadsheet
@@ -1182,7 +1182,7 @@
   trigger:
     - platform: state
       entity_id: switch.frontdoor_kevo
-      state: 'off'
+      to: 'off'
       for:
         minutes: 2
         seconds: 00
@@ -1280,7 +1280,7 @@
     - platform: state
       entity_id:
         - sensor.stairs_up_nest_protect_co_status
-      state: 'Emergency'
+      to: 'Emergency'
 
   action:
 # Event Recorder spreadsheet
@@ -1305,7 +1305,7 @@
     - platform: state
       entity_id:
         - sensor.stairs_up_nest_protect_co_status
-      state: 'Warning'
+      to: 'Warning'
 
   action:
 # Event Recorder spreadsheet
@@ -1330,7 +1330,7 @@
     - platform: state
       entity_id:
         - sensor.stairs_up_nest_protect_smoke_status
-      state: 'Emergency'
+      to: 'Emergency'
 
   action:
 # Event Recorder spreadsheet
@@ -1355,7 +1355,7 @@
     - platform: state
       entity_id:
         - sensor.stairs_up_nest_protect_smoke_status
-      state: 'Warning'
+      to: 'Warning'
 
   action:
 # Event Recorder spreadsheet
@@ -1429,7 +1429,7 @@
   trigger:
     - platform: state
       entity_id: input_boolean.panic_mode
-      state: 'on'
+      to: 'on'
 
   action:
     - service: switch.turn_on
@@ -1462,7 +1462,7 @@
   trigger:
     - platform: state
       entity_id: input_boolean.panic_mode
-      state: 'off'
+      to: 'off'
 
   action:
     - service: script.turn_off
@@ -1500,7 +1500,7 @@
   trigger:
     - platform: state
       entity_id: group.billy_devices
-      state: home
+      to: home
     
   condition:
     - condition: state
@@ -1552,7 +1552,7 @@
   trigger:
     - platform: state
       entity_id: media_player.living_room_2
-      state: 'idle'
+      to: 'idle'
 
   action:
     - service: homeassistant.turn_off
@@ -1569,7 +1569,7 @@
   trigger:
     - platform: state
       entity_id: media_player.living_room_2
-      state: 'off'
+      to: 'off'
 
   action:
     - service: homeassistant.turn_off
@@ -1586,7 +1586,7 @@
   trigger:
     - platform: state
       entity_id: media_player.living_room_2
-      state: 'playing'
+      to: 'playing'
 
   action:
     - service: homeassistant.turn_on
@@ -1677,7 +1677,7 @@
   trigger:
     - platform: state
       entity_id: media_player.living_room_tv
-      state: 'idle'
+      to: 'idle'
 
   action:
     - service: homeassistant.turn_off
@@ -1694,7 +1694,7 @@
   trigger:
     - platform: state
       entity_id: media_player.living_room_tv
-      state: 'off'
+      to: 'off'
 
   action:
     - service: homeassistant.turn_off
@@ -1711,7 +1711,7 @@
   trigger:
     - platform: state
       entity_id: media_player.living_room_tv
-      state: 'playing'
+      to: 'playing'
       for: 1
 
   action:
@@ -1780,7 +1780,7 @@
     - platform: state
       entity_id:
         - input_boolean.sexy_time
-      state: 'on'  
+      to: 'on'  
 
   action:
 # Start Bed lights
@@ -1811,7 +1811,7 @@
     - platform: state
       entity_id:
         - input_boolean.sexy_time
-      state: 'off'
+      to: 'off'
 
   action:
     - service: script.turn_off
@@ -1840,7 +1840,7 @@
   trigger:
     - platform: state
       entity_id: input_select.sonos_playlist
-      state: "Jesus Music"
+      to: "Jesus Music"
 
   action:
     - service: shell_command.sonos_playlist_jesus_music
@@ -1858,7 +1858,7 @@
   trigger:
     - platform: state
       entity_id: input_select.sonos_playlist
-      state: "Pick one"
+      to: "Pick one"
 
   action:
     - service: media_player.turn_off
@@ -1878,7 +1878,7 @@
   trigger:
     - platform: state
       entity_id: input_select.sonos_playlist
-      state: "Sleepy time"
+      to: "Sleepy time"
 
   action:
     - service: shell_command.sonos_playlist_sleepy_time
@@ -1897,7 +1897,7 @@
   trigger:
     - platform: state
       entity_id: input_boolean.vacation_mode
-      state: 'on'
+      to: 'on'
 
 #    condition:
 #      condition: or
@@ -2022,7 +2022,7 @@
 # Start at 5am
   trigger:
     - platform: time
-      after: '05:00:00'
+      at: '05:00:00'
 
 # when Billy is home
 # and when it is Mon-Fri or Sun
@@ -2123,7 +2123,7 @@
   hide_entity: false
   trigger:
     - platform: time
-      after: '06:00:00'
+      at: '06:00:00'
 
   condition:
     condition: and
@@ -2237,7 +2237,7 @@
 # Turn some bed lights on
     - service: light.turn_on
       entity_id:
-      - light.billy_bedside_strip
+        - light.billy_bedside_strip
         - light.foot_of_bed
       data:
         brightness: 10
