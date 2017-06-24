@@ -1,0 +1,411 @@
+panic_button:
+  name: Panic Button
+  view: false
+  control: hidden
+  entities:
+  - input_boolean.panic_mode
+master_control:
+  name: Master Control
+  view: false
+  control: hidden
+  entities:
+  - switch.frontdoor_kevo
+  - group.sonos
+  - group.all_hue_lights
+  - group.all_wemo_switches
+  - alarm_control_panel.alarm
+on_demand:
+  name: On Demand
+  view: false
+  control: hidden
+  entities:
+  - input_boolean.bedtime
+  - sensor.bedtime_timer
+  - input_boolean.media_mode
+  - input_boolean.vacation_mode
+  - input_boolean.sexy_time
+  - input_select.sonos_playlist
+automation_override:
+  name: Automation Override
+  view: false
+  control: hidden
+  entities:
+  - input_boolean.media_lockout
+  - input_boolean.media_playing
+  - input_boolean.company
+  - input_boolean.no_work
+  - input_boolean.lights_disable
+automations_morning:
+  name: Automations Morning
+  view: false
+  entities:
+  - automation.billy_wake_up
+  - automation.gina_wake_up
+automations_arrivals:
+  name: Automations Arrivals
+  view: false
+  entities:
+  - automation.arrival_billy_before_8pm
+  - automation.arrival_billy_after_8pm
+  - automation.arrival_gina_before_8pm
+  - automation.arrival_gina_after_8pm
+  - automation.arrival_family_before_8pm
+  - automation.arrival_family_after_8pm
+automations_not_home:
+  name: Automations Not Home
+  view: false
+  entities:
+  - automation.not_home_billy
+  - automation.not_home_gina
+automations_bedtime:
+  name: Automations Bedtime
+  view: false
+  entities:
+  - automation.bedtime
+automations_lights:
+  name: Automations Lights
+  view: false
+  entities:
+  - automation.lights_off_during_day_sun
+  - automation.lights_on_after_dark_presence
+  - automation.lights_on_after_dark_sun
+  - automation.nightlights_off
+  - automation.nightlights_on
+automations_notifications:
+  name: Automations Notifications
+  view: false
+  entities:
+  - automation.bed_lights_turned_on
+  - automation.bryn_mawr_nest_protect_co_emergency
+  - automation.bryn_mawr_nest_protect_co_warning
+  - automation.bryn_mawr_nest_protect_smoke_emergency
+  - automation.bryn_mawr_nest_protect_smoke_warning
+  - automation.front_door_unlocked
+  - automation.startup_notification
+  - automation.update_available_notification
+  - automation.liberty_nest_protect_co_emergency
+  - automation.liberty_nest_protect_co_warning
+  - automation.liberty_nest_protect_smoke_emergency
+  - automation.liberty_nest_protect_smoke_warning
+  - automation.login_failure
+automations_alarm:
+  name: Automations Alarm
+  view: false
+  entities:
+  - automation.alarm_front_door
+  - automation.alarm_triggered_actions
+  - automation.alarm_triggered_disable
+  - automation.panic_mode_on
+  - automation.panic_mode_off
+automations_media:
+  name: Automations Media
+  view: false
+  entities:
+  - automation.media_mode_on
+  - automation.media_mode_off
+automations_presence_detection:
+  name: Automations Presence Detection
+  view: false
+  entities:
+  - automation.presence_billy_is_home
+  - automation.presence_billy_not_home
+  - automation.presence_chromecast_idle
+  - automation.presence_chromecast_off
+  - automation.presence_chromecast_running
+  - automation.presence_family_is_home
+  - automation.presence_family_not_home
+  - automation.presence_gina_is_home
+  - automation.presence_gina_not_home
+automations_resets:
+  name: Automations Resets
+  view: false
+  entities:
+  - automation.reset_bedtime_switch
+  - automation.reset_lights_disable_switch
+automations_sexy_time:
+  name: Automations Sexy Time
+  view: false
+  entities:
+  - automation.sexy_time
+  - automation.sexy_time_off
+automations_vacation:
+  name: Automations Vacation
+  view: false
+  entities:
+  - automation.vacation_mode
+bedroom:
+  name: Bedroom
+  view: false
+  entities:
+  - group.bed_lights
+  - binary_sensor.aeotec_zw100_multisensor_6_sensor_6_0
+  - sensor.aeotec_zw100_multisensor_6_temperature_6_1
+  - sensor.aeotec_zw100_multisensor_6_relative_humidity_6_5
+  - sensor.aeotec_zw100_multisensor_6_luminance_6_3
+  - sensor.aeotec_zw100_multisensor_6_ultraviolet_6_27
+  - sensor.aeotec_zw100_multisensor_6_alarm_level_6_1
+  - sensor.aeotec_zw100_multisensor_6_alarm_type_6_0
+  - sensor.aeotec_zw100_multisensor_6_burglar_6_10
+  - sensor.aeotec_zw100_multisensor_6_sourcenodeid_6_2
+  - media_player.bedroom
+living_room:
+  name: Living Room
+  view: false
+  entities:
+  - climate.living_room
+  - media_player.living_room
+  - media_player.living_room_2
+  - media_player.plex_web_chrome
+  - switch.lamp_1
+  - switch.lamp_2
+  - switch.TV_Switch
+  - binary_sensor.aeotec_zw112_door_window_sensor_6_sensor_3_0
+  - media_player.living_room_tv
+kitchen:
+  name: Kitchen
+  view: false
+  entities:
+  - media_player.kitchen
+  - light.__level_2_0
+basement:
+  name: Basement
+  view: false
+  entities:
+  - media_player.playroom
+bandwidth:
+  name: Bandwidth
+  view: false
+  entities:
+  - sensor.speedtest_download
+  - sensor.speedtest_upload
+  - sensor.speedtest_ping
+weather:
+  name: Weather
+  view: false
+  entities:
+  - sensor.date__time
+  - sun.sun
+  - sensor.moon
+  - sensor.dark_sky_temperature
+  - sensor.dark_sky_daily_high_temperature
+  - sensor.dark_sky_daily_low_temperature
+  - sensor.dark_sky_cloud_coverage
+  - sensor.dark_sky_humidity
+  - sensor.dark_sky_precip
+  - sensor.dark_sky_precip_probability
+  - sensor.dark_sky_daily_summary
+system_monitor:
+  name: HA Monitoring
+  view: false
+  control: hidden
+  entities:
+  - script.restart_ha
+  - sensor.cpu_use
+  - sensor.ram_free
+  - sensor.disk_free_home
+  - sensor.last_boot
+  - sensor.ssl_cert_expiry
+  - updater.updater
+  - script.backup_ha
+bill:
+  name: Bill
+  view: false
+  control: hidden
+  entities:
+  - script.refresh_devices
+  - input_boolean.billy_home
+  - input_select.billy_status
+  - sensor.bills_6p_battery
+gina:
+  name: Gina
+  view: false
+  control: hidden
+  entities:
+  - script.refresh_devices
+  - input_boolean.gina_home
+  - input_select.gina_status
+extended_family:
+  name: Family
+  view: false
+  control: hidden
+  entities:
+  - input_boolean.family
+battery_status:
+  name: Battery Status
+  view: false
+  entities:
+  - sensor.stairs_up_nest_protect_battery_health
+  - sensor.front_door_sensor_batt
+liberty_nest:
+  name: Liberty Nest Devices
+  view: false
+  entities:
+  - sensor.living_room_thermostat_operation_mode
+  - sensor.living_room_thermostat_temperature
+  - sensor.living_room_thermostat_target
+  - sensor.living_room_thermostat_humidity
+  - sensor.stairs_up_nest_protect_co_status
+  - sensor.stairs_up_nest_protect_smoke_status
+  - binary_sensor.living_room_thermostat_fan
+  - binary_sensor.stairs_up_nest_protect_online
+  - binary_sensor.living_room_thermostat_has_leaf
+  - binary_sensor.living_room_thermostat_is_locked
+  - binary_sensor.living_room_thermostat_is_using_emergency_heat
+  - binary_sensor.living_room_thermostat_online
+bryn_mawr_nest:
+  name: Bryn Mawr Nest Devices
+  view: false
+  entities:
+  - binary_sensor.dining_room_thermostat_fan
+  - binary_sensor.dining_room_thermostat_has_leaf
+  - binary_sensor.dining_room_thermostat_is_locked
+  - binary_sensor.dining_room_thermostat_is_using_emergency_heat
+  - binary_sensor.dining_room_thermostat_online
+  - binary_sensor.basement_nest_protect_online
+  - binary_sensor.hallway_nest_protect_living_room_online
+  - binary_sensor.upstairs_nest_protect_online
+  - sensor.dining_room_thermostat_temperature
+  - sensor.dining_room_thermostat_target
+  - sensor.dining_room_thermostat_humidity
+  - sensor.dining_room_thermostat_operation_mode
+  - sensor.basement_nest_protect_battery_health
+  - sensor.basement_nest_protect_co_status
+  - sensor.basement_nest_protect_smoke_status
+  - sensor.hallway_nest_protect_battery_health
+  - sensor.hallway_nest_protect_co_status
+  - sensor.hallway_nest_protect_smoke_status
+  - sensor.upstairs_nest_protect_battery_health
+  - sensor.upstairs_nest_protect_co_status
+  - sensor.upstairs_nest_protect_smoke_status
+testing:
+  name: Testing
+  view: false
+  control: hidden
+  entities:
+  - script.test_notification
+  - input_boolean.testing
+  - automation.test_automation
+  - automation.test_off_automation
+default_view:
+  view: true
+  icon: mdi:home
+  entities:
+  - group.panic_button
+  - group.master_control
+  - group.on_demand
+  - group.automation_override
+  - device_tracker.ginas_s6
+  - device_tracker.mosquitto_billsphone
+  - group.system_monitor
+  - group.bandwidth
+  - climate.living_room
+  - group.battery_status
+  - group.weather
+  - camera.weather_radar
+  - persistent_notification.minimote
+  - group.testing
+household:
+  name: Household
+  view: false
+  entities:
+  - input_boolean.billy_home
+  - input_boolean.gina_home
+billy_devices:
+  name: Billy Mobile Devices
+  view: false
+  entities:
+  - device_tracker.mosquitto_billsphone
+  - device_tracker.billy_6p
+gina_devices:
+  name: Gina Mobile Devices
+  view: false
+  entities:
+  - device_tracker.ginas_s6
+sonos:
+  name: All Sonos Speakers
+  view: false
+  entities:
+  - media_player.bedroom
+  - media_player.kitchen
+  - media_player.living_room
+  - media_player.playroom
+all_hue_lights:
+  name: All Hue Lights
+  view: false
+  entities:
+  - light.head_of_bed
+  - light.billy_bedside_strip
+  - light.gina_bedside_strip
+  - light.foot_of_bed
+all_wemo_switches:
+  name: All WEMO Switches
+  view: false
+  entities:
+  - switch.lamp_1
+  - switch.lamp_2
+bed_lights:
+  name: Bed Lighting
+  view: false
+  entities:
+  - light.billy_bedside_strip
+  - light.foot_of_bed
+  - light.gina_bedside_strip
+  - light.head_of_bed
+automations:
+  name: Automations
+  view: true
+  icon: mdi:robot
+  entities:
+  - group.automations_morning
+  - group.automations_arrivals
+  - group.automations_not_home
+  - group.automations_bedtime
+  - group.automations_lights
+  - group.automations_notifications
+  - group.automations_alarm
+  - group.automations_media
+  - group.automations_presence_detection
+  - group.automations_vacation
+family:
+  name: Family
+  view: true
+  icon: mdi:account-multiple
+  entities:
+  - group.bill
+  - group.gina
+  - group.extended_family
+bedroom_view:
+  name: Bedroom
+  view: true
+  icon: mdi:hotel
+  entities:
+  - group.bedroom
+living_room_view:
+  name: Living Room
+  view: true
+  icon: mdi:sofa
+  entities:
+  - climate.living_room
+  - media_player.living_room
+  - media_player.living_room_2
+  - group.liberty_nest
+  - group.living_room
+kitchen_view:
+  name: Kitchen
+  view: true
+  icon: mdi:food
+  entities:
+  - group.kitchen
+basement_view:
+  name: Basement
+  view: true
+  icon: mdi:dumbbell
+  entities:
+  - group.basement
+brynmawr:
+  name: Mom n Dads
+  view: true
+  icon: mdi:home-variant
+  entities:
+  - climate.dining_room
+  - group.bryn_mawr_nest

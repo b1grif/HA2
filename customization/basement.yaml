@@ -1,0 +1,10 @@
+# friendly_name:
+# hidden: true
+# entity_picture:
+# icon: mdi:
+# assumed_state:
+# sensor_class:
+
+# Media Players
+media_player.playroom:
+  friendly_name: Basement Play1

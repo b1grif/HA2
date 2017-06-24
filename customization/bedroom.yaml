@@ -1,0 +1,33 @@
+# friendly_name:
+# hidden: true
+# entity_picture:
+# icon: mdi:
+# assumed_state:
+# sensor_class:
+
+# Lights
+light.billy_bedside_strip:
+  friendly_name: Billy Bedside Strip
+  icon: mdi:lightbulb-outline
+light.foot_of_bed:
+  friendly_name: Foot of Bed Strip
+  icon: mdi:lightbulb-outline
+light.gina_bedside_strip:
+  friendly_name: Gina Bedside Strip
+  icon: mdi:lightbulb-outline
+light.head_of_bed:
+  friendly_name: Head of Bed Strip
+  icon: mdi:lightbulb-outline
+group.all_lights:
+  friendly_name: All Lights
+  icon: mdi:lightbulb-outline
+  hidden: true
+  
+# Media Players
+media_player.bedroom:
+  friendly_name: Bedroom Play1
+
+# Bedtime Timer
+sensor.bedtime_timer:
+  friendly_name: Bedtime Timer
+  icon: mdi:timer

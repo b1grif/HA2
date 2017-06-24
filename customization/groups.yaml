@@ -1,0 +1,6 @@
+
+# Lights
+group.all_lights:
+  friendly_name: All Lights
+  icon: mdi:lightbulb-outline
+  hidden: true

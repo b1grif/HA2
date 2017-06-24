@@ -1,0 +1,9 @@
+
+# Lights
+light.__level_2_0:
+  friendly_name: Kitchen Sink Lights
+  icon: mdi:lightbulb-outline
+  
+# Media Players
+media_player.kitchen:
+  friendly_name: Kitchen Play1
