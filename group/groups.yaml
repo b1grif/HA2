@@ -1,0 +1,56 @@
+### Groups of Devices ###
+
+household:
+  name: Household
+  view: no
+  entities:
+    - input_boolean.billy_home
+    - input_boolean.gina_home
+
+billy_devices:
+  name: Billy Mobile Devices
+  view: no
+  entities:
+    - device_tracker.mosquitto_billsphone
+    - device_tracker.billy_6p
+
+gina_devices:
+  name: Gina Mobile Devices
+  view: no
+  entities:
+    - device_tracker.ginas_s6
+
+sonos:
+  name: All Sonos Speakers
+  view: no
+  entities:
+    - media_player.bedroom
+    - media_player.kitchen
+    - media_player.living_room
+    - media_player.playroom
+
+all_hue_lights:
+  name: All Hue Lights
+  view: no
+  entities:
+    - light.billy_bedside_strip
+    - light.gina_bedside_strip
+    - light.foot_of_bed
+    - light.head_of_bed
+
+all_wemo_switches:
+  name: All WEMO Switches
+  view: no
+  entities:
+    - switch.lamp_1
+    - switch.lamp_2
+#    - switch.TV_Switch
+
+bed_lights:
+  name: Bed Lighting
+  view: no
+  entities:
+    - light.billy_bedside_strip
+    - light.foot_of_bed
+    - light.gina_bedside_strip
+    - light.head_of_bed

@@ -1,0 +1,18 @@
+default_view:
+  view: yes
+  icon: mdi:home
+  entities:
+    - group.panic_button
+    - group.master_control
+    - group.on_demand
+    - group.automation_override
+    - device_tracker.ginas_s6
+    - device_tracker.mosquitto_billsphone
+    - group.system_monitor
+    - group.bandwidth
+    - climate.living_room
+    - group.battery_status
+    - group.weather
+    - camera.weather_radar
+    - persistent_notification.minimote
+    - group.testing

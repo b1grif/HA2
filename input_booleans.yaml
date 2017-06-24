@@ -1,0 +1,91 @@
+billy_home:
+  name: Billy Home
+  initial: off
+  icon: mdi:human-male
+
+gina_home:
+  name: Gina Home
+  initial: off
+  icon: mdi:human-female
+
+bedtime:
+  name: Bedtime
+  initial: off
+  icon: mdi:hotel
+
+company:
+  name: Company
+  icon: mdi:account-alert
+  initial: off
+
+family:
+  name: Family
+  icon: mdi:account-multiple
+  initial: off
+  
+lights_disable:
+  name: Disable Lights
+  initial: off
+  icon: mdi:theme-light-dark
+
+media_mode:
+  name: Media Mode
+  icon: mdi:filmstrip
+  initial: off
+  
+media_lockout:
+  name: Media Lockout
+  icon: mdi:filmstrip
+  initial: off
+
+media_playing:
+  name: Media Playing
+  icon: mdi:play-circle
+  initial: off
+
+no_work:
+  name: No Work
+  icon: mdi:tie
+  initial: off
+
+panic_mode:
+  name: Panic Mode
+  initial: off
+  icon: mdi:exclamation
+
+sexy_time:
+  name: Sexy Time
+  initial: off
+  icon: mdi:human-male-female
+  
+vacation_mode:
+  name: Vacation Mode
+  initial: off
+  icon: mdi:airplane
+
+testing:
+  name: Testing
+  initial: off
+  icon: mdi:biohazard
+  
+# Not used anymore 
+alarm_tripped:
+  name: Alarm Tripped
+  initial: off
+  icon: mdi:exclamation
+
+alarm_enabled:
+  name: Alarm Enabled
+  initial: off
+  icon: mdi:shield-outline
+
+disable_lock:
+  name: Disable Lock
+  initial: off
+  icon: mdi:lock-plus
+
+home_away:
+  name: Disable Home / Away Mode
+  initial: off
+  icon: mdi:map-marker-off
+

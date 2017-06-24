@@ -1,0 +1,10 @@
+panic_triggered:
+  name: Panic Mode Triggered
+  entity_id: input_boolean.panic_mode
+  state: 'on'
+  repeat: 1
+  can_acknowledge: True
+  skip_first: False
+  notifiers:
+    - bills_6p_2
+#    - ginas_text

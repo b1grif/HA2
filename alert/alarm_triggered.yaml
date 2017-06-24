@@ -1,0 +1,10 @@
+alarm_triggered:
+  name: Alarm Triggered
+  entity_id: alarm_control_panel.alarm
+  state: 'triggered'
+  repeat: 3
+  can_acknowledge: True
+  skip_first: True
+  notifiers:
+    - bills_6p_2
+#    - ginas_text

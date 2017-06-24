@@ -1,6 +1,6 @@
 ####################################################
 #                                                  #
-#               HA 2 General Confi                 #
+#               HA 2 General Config                #
 #                                                  #
 ####################################################
 homeassistant:
@@ -32,14 +32,43 @@ alarm_control_panel:
   trigger_time: 600
   disarm_after_trigger: false
 
+camera:
+  - platform: generic
+    still_image_url: https://radblast.wunderground.com/cgi-bin/radar/WUNIDS_map?station=LOT&brand=wui&num=1&delay=15&type=N0R&frame=0&scale=1.000&noclutter=0&showstorms=0&mapx=400&mapy=240&centerx=400&centery=240&transx=0&transy=0&showlabels=1&severe=0&rainsnow=0&lightning=0&smooth=0&rand=24691024&lat=0&lon=0&label=you
+    name: weather_radar
+
 climate:
-  platform: nest
+  - platform: nest
+
+device_tracker:
+  - platform: bluetooth_tracker
+  - platform: nmap_tracker
+    hosts: 192.168.0.1-80
+    track_new_devices: yes
+    home_interval: 10
+  - platform: owntracks
+    max_gps_accuracy: 100
 
 ifttt:
   key: !secret ifttt_secret
 
+media_player:
+  - platform: cast
+    host: 192.168.0.31
+  - platform: webostv
+    host: 192.168.0.36
+    mac: A0-6F-AA-38-FE-1A
+    name: Living Room TV
+    customize:
+      sources:
+        - livetv
+        - youtube
+        - netflix
+  - platform: plex
+  - platform: sonos
+
 mqtt:
-  broker: 192.168.0.25
+  broker: 192.168.0.30
   port: 1883
   client_id: home-assistant-1
   keepalive: 60
@@ -57,9 +86,92 @@ nest:
       - 'is_locked'
       - 'has_leaf'
 
+notify:
+  - platform: html5
+    name: HTML5
+    gcm_api_key: !secret html5_server_key
+    gcm_sender_id: !secret html5_sender_id
+  - platform: webostv
+    host: 192.168.0.36
+    name: livingroom_tv
+
+
 # Weather Prediction
 sensor:
-  platform: yr
+  - platform: darksky
+    api_key: !secret dark_sky_api
+    monitored_conditions:
+      - summary
+      - icon
+      - nearest_storm_distance
+      - nearest_storm_bearing
+      - precip_type
+      - precip_intensity
+      - precip_probability
+      - temperature
+      - apparent_temperature
+      - dew_point
+      - wind_speed
+      - wind_bearing
+      - cloud_cover
+      - humidity
+      - pressure
+      - visibility
+      - ozone
+      - minutely_summary
+      - hourly_summary
+      - daily_summary
+      - temperature_max
+      - temperature_min
+      - apparent_temperature_max
+      - apparent_temperature_min
+      - precip_intensity_max
+  - platform: template
+    sensors:
+      chromecast:
+        value_template: "{{ 'Online' if is_state('device_tracker.chromecast', 'home') else 'Offline' }}"
+  - platform: moon
+  - platform: mqtt
+    state_topic: 'owntracks/mosquitto/billsphone'
+    name: 'Bills 6P Battery'
+    unit_of_measurement: '%'
+    value_template: '{{ value_json.batt }}'
+  - platform: nest
+    monitored_conditions:
+      - temperature
+      - target
+      - humidity
+      - operation_mode
+      - hvac_state
+      - battery_level
+      - co_status
+      - smoke_status
+      - weather_temperature
+      - weather_humidity
+      - weather_condition
+      - wind_speed
+      - wind_direction
+  - platform: speedtest
+    monitored_conditions:
+      - ping
+      - download
+      - upload
+  - platform: command_line
+    name: SSL Cert Expiry
+    unit_of_measurement: days
+    scan_interval: 86400
+    command: "ssl-cert-check -c /etc/letsencrypt/live/griffithshome.duckdns.org/cert.pem | tail -c 38"
+  - platform: systemmonitor
+    resources:
+      - type: disk_free
+        arg: /home
+      - type: memory_free
+      - type: processor_use
+      - type: last_boot
+  - platform: time_date
+    display_options:
+      - "date_time"
+  - platform: yr
 
 # Track the sun
 sun:

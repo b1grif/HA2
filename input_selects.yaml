@@ -1,0 +1,75 @@
+billy_status:
+  name: Bill Status
+  options:
+   - home
+   - away
+   - driving
+   - sleeping
+   - standby
+  initial: standby
+
+gina_status:
+  name: Gina Status
+  options:
+   - home
+   - away
+   - driving
+   - sleeping
+   - standby
+  initial: standby
+
+holiday:
+  name: Holiday Lighting
+  options:
+    - None
+    - Valentine's Day
+    - St. Patrick's Day
+    - Easter
+    - Memorial Day
+    - Independence Day
+    - Labor Day
+    - Halloween
+    - Veterans Day
+    - Thanksgiving
+    - Christmas
+    - Bears Game
+  initial: None
+  icon: mdi:gift
+
+hyperion_effect:
+  name: Hyperion Effect
+  options:
+   - Off
+   - Knight Rider
+   - Mood Blobs Blue
+   - Mood Blobs Cold
+   - Mood Blobs Full Color
+   - Mood Blobs Green
+   - Mood Blobs Rainbow
+   - Mood Blobs Red
+   - Mood Blobs Warm
+   - Rainbow Swirl
+   - Snake
+   - Strobe Blue
+   - Strobe Raspberry
+   - Strobe White
+   - Cinema Dim Lights
+   - Cinema Brighten Lights
+   - Police Lights Single
+   - Police Lights Solid
+   - Random
+   - Running Dots
+   - System Shutdown
+   - Sparks Color
+   - Sparks
+   - Color Traces
+  initial: Off
+
+sonos_playlist:
+  name: Sonos Playlists
+  options:
+   - Pick one
+   - Jesus music
+   - Sleepy time
+  initial: Pick one
+  icon: mdi:playlist-check
