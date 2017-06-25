@@ -189,6 +189,19 @@ sensor:
 # Track the sun
 sun:
 
+switch:
+  - platform: command_line
+    switches:
+      frontdoor_kevo:
+        command_on: "python /home/homeassistant/.homeassistant/kevo/lock-liberty.py"
+        command_off: "python /home/homeassistant/.homeassistant/kevo/unlock-liberty.py"
+        command_state: "python /home/homeassistant/.homeassistant/kevo/status-liberty.py"
+        value_template: '{{ value == "Locked" }}'
+  - platform: command_line
+    switches:
+      sleepytime_tasker:
+        command_on: 'python3 /home/hass/.homeassistant/python_scripts/sleepytime_tasker.py'
+
 # Text to speech
 tts:
   - platform: google

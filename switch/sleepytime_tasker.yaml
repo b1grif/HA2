@@ -1,5 +1,0 @@
-platform: command_line
-switches:
-  sleepytime_tasker:
-    command_on: 'python3 /home/hass/.homeassistant/python_scripts/sleepytime_tasker.py'
-#    command_off: 

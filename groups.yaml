@@ -228,6 +228,7 @@ gina:
   - input_boolean.gina_home
   - input_select.gina_status
   - device_tracker.ginas_s6
+  - device_tracker.samsungsmg925v
 extended_family:
   name: Family
   view: false
@@ -324,6 +325,7 @@ gina_devices:
   view: false
   entities:
   - device_tracker.ginas_s6
+  - device_tracker.samsungsmg925v
 sonos:
   name: All Sonos Speakers
   view: false
