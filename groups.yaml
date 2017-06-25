@@ -216,6 +216,9 @@ bill:
   - input_boolean.billy_home
   - input_select.billy_status
   - sensor.bills_6p_battery
+  - device_tracker.nexus6p
+  - device_tracker.mosquitto_billsphone
+  - device_tracker.billy_6p
 gina:
   name: Gina
   view: false
@@ -224,6 +227,7 @@ gina:
   - script.refresh_devices
   - input_boolean.gina_home
   - input_select.gina_status
+  - device_tracker.ginas_s6
 extended_family:
   name: Family
   view: false
