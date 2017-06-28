@@ -5,7 +5,7 @@
   hide_entity: false
   trigger:
     - platform: state
-      entity_id: binary_sensor.aeotec_zw112_door_window_sensor_6_sensor_3_0
+      entity_id: binary_sensor.aeotec_zw112_door_window_sensor_6_sensor
       to: 'on'
 
   condition:
@@ -43,8 +43,6 @@
 
   action:
 # Notifications
-    - service: ifttt.trigger
-      data: {"event":"gina_text", "value1":"Alarm", "value2":"triggered!"}
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Alarm triggered actions"}
     - service: notify.html5
@@ -126,8 +124,6 @@
         - group.bed_lights
 # Notifications
     - service: ifttt.trigger
-      data: {"event":"gina_text", "value1":"Alarm was triggered but", "value2":"cleared. Alarm system is currently disabled"}
-    - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Alarm triggered was cleared"}
     - service: notify.html5
       data:
@@ -172,10 +168,6 @@
     - service: switch.turn_on
       entity_id:
         - switch.tv_switch
-#      - service: ifttt.trigger
-#        data: {"event":"billy_ifttt", "value1":"Billy", "value2":"Home!"}
-#      - service: ifttt.trigger
-#        data: {"event":"gina_text", "value1":"Billy", "value2":"Home!"}
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Billy Arrive Home After 8pm"}
     - service: notify.html5
@@ -300,8 +292,7 @@
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Family Arrive At The House After 8PM"}
 # Notify Gina
-#      - service: ifttt.trigger
-#        data: {"event":"gina_text", "value1":"Billy", "value2":"Home!"}
+
 # Notify Billy
     - service: notify.html5
       data:
@@ -336,8 +327,7 @@
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Family Arrive At The House Before 8PM"}
 # Notify Gina
-#      - service: ifttt.trigger
-#        data: {"event":"gina_text", "value1":"Billy", "value2":"Home!"}
+
 # Notify Billy
     - service: notify.html5
       data:
@@ -376,8 +366,7 @@
     - service: switch.turn_on
       entity_id:
         - switch.tv_switch
-#      - service: ifttt.trigger
-#        data: {"event":"billy_ifttt", "value1":"Gina", "value2":"home"}
+
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Gina Arrive Home After 8pm"}
     - service: notify.html5
@@ -417,8 +406,7 @@
     - service: switch.turn_on
       entity_id:
         - switch.tv_switch
-#      - service: ifttt.trigger
-#        data: {"event":"billy_ifttt", "value1":"Gina", "value2":"home"}
+
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Gina Arrive Home Before 8pm"}
     - service: notify.html5
@@ -761,7 +749,7 @@
   hide_entity: false
   trigger:
     - platform: state
-      entity_id: sensor.aeotec_zw100_multisensor_6_burglar_6_10
+      entity_id: sensor.aeotec_zw100_multisensor_6_burglar
       from: '8'
       to: '0'
 
@@ -783,7 +771,7 @@
   hide_entity: false
   trigger:
     - platform: state
-      entity_id: sensor.aeotec_zw100_multisensor_6_burglar_6_10
+      entity_id: sensor.aeotec_zw100_multisensor_6_burglar
       from: '0'
       to: '8'
 
@@ -962,8 +950,7 @@
 # IFTTT Notification
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Billy Not Home"}
-#      - service: ifttt.trigger
-#        data: {"event":"gina_text", "value1":"Billy", "value2":"Home!"}
+
     - service: notify.html5
       data:
         title: "Not Home Notification"
@@ -1031,8 +1018,7 @@
         entity_id: input_select.billy_status
         option: "away"
 # IFTTT Notification
-    - service: ifttt.trigger
-      data: {"event":"billy_ifttt", "value1":"No one", "value2":"home"}
+
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Gina Not Home"}
     - service: notify.html5
@@ -1222,8 +1208,7 @@
 #        event_type: homeassistant_start
 
   action:
-#      - service: ifttt.trigger
-#        data: {"event":"billy_ifttt", "value1":"Home Assistant", "value2":"Up and Running"}
+
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"HA Startup Notification"}
 
@@ -1380,8 +1365,6 @@
       value_template: "{{ states('persistent_notification.httplogin') != 'unknown' }}"
 
   action:
-#      - service: ifttt.trigger
-#        data: {"event":"billy_ifttt", "value1":"Someone", "value2":"failing to login!"}
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Login Failure"}
 # HTML5 Notification
@@ -1440,10 +1423,6 @@
       entity_id:
         - light.__level_2_0
     - service: script.panic1
-#      - service: ifttt.trigger
-#        data: {"event":"billy_ifttt", "value1":"Panic Button", "value2":"pushed!"}
-    - service: ifttt.trigger
-      data: {"event":"gina_text", "value1":"Panic Button", "value2":"pushed!"}
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Panic Mode"}
     - service: notify.html5
@@ -1478,10 +1457,7 @@
     - service: switch.turn_off
       entity_id:
         - group.all_switches
-#      - service: ifttt.trigger
-#        data: {"event":"billy_ifttt", "value1":"Home", "value2":"all clear!"}
-    - service: ifttt.trigger
-      data: {"event":"gina_text", "value1":"Home", "value2":"all clear!"}
+
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Panic Mode Off"}
     - service: notify.html5
@@ -1788,8 +1764,7 @@
 # Lock Kevo
     - service: switch.turn_on
       entity_id: switch.frontdoor_kevo
-#      - service: ifttt.trigger
-#        data: {"event":"billy_ifttt", "value1":"Sexy Time!"}
+
 # Event Recorder
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Sexy Time"}
@@ -1821,8 +1796,6 @@
     - service: light.turn_off
       entity_id:
         - group.bed_lights
-#      - service: ifttt.trigger
-#        data: {"event":"billy_ifttt", "value1":"Sexy Time", "value2":"off!"}
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Sexy Time Off"}
     - service: notify.html5
@@ -1848,8 +1821,7 @@
       data: {"event":"Event_Recorder", "value1":"Start Sonos Playlist Jesus Music"}
 #      - service: ifttt.trigger
 #        data: {"event":"billy_ifttt", "value1":"{{states.input_select.sonos_playlist.state.lower().replace(" ", "").replace("-", "")}}"}
-#      - service: ifttt.trigger
-#        data: {"event":"gina_text", "value1":"Billy", "value2":"Home!"}
+
 
 ###################################################################
 - id: start_sonos_playlist_pick_one
@@ -1866,10 +1838,6 @@
         - group.sonos
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Start Sonos Playlist Pick One"}
-#      - service: ifttt.trigger
-#        data: {"event":"billy_ifttt", "value1":"{{states.input_select.sonos_playlist.state.lower().replace(" ", "").replace("-", "")}}"}
-#      - service: ifttt.trigger
-#        data: {"event":"gina_text", "value1":"Billy", "value2":"Home!"}
 
 ###################################################################
 - id: start_sonos_playlist_sleepy_time
@@ -1884,10 +1852,7 @@
     - service: shell_command.sonos_playlist_sleepy_time
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Start Sonos Playlist Sleepy Time"}
-#      - service: ifttt.trigger
-#        data: {"event":"billy_ifttt", "value1":"{{states.input_select.sonos_playlist.state.lower().replace(" ", "").replace("-", "")}}"}
-#      - service: ifttt.trigger
-#        data: {"event":"gina_text", "value1":"Billy", "value2":"Home!"}
+
 
 ###################################################################
 - id: vacation_mode
