@@ -47,8 +47,8 @@ device_tracker:
     hosts: 192.168.0.1-80
     track_new_devices: yes
     home_interval: 10
-  - platform: owntracks
-    max_gps_accuracy: 100
+#  - platform: owntracks
+#    max_gps_accuracy: 100
   - platform: ping
     hosts:
       billsphone: 192.168.0.40 
@@ -72,7 +72,8 @@ media_player:
   - platform: sonos
 
 mqtt:
-  broker: 192.168.0.30
+#  broker: 192.168.0.30
+  broker: griffithshome.duckdns.org
   port: 1883
   client_id: home-assistant-1
   keepalive: 60
@@ -182,9 +183,9 @@ sensor:
   - platform: fedex
     username: !secret fedex_username
     password: !secret fedex_password
-  - platform: usps
-    username: !secret usps_username
-    password: !secret usps_password
+#  - platform: usps
+#    username: !secret usps_username
+#    password: !secret usps_password
 
 # Track the sun
 sun:
@@ -193,14 +194,14 @@ switch:
   - platform: command_line
     switches:
       frontdoor_kevo:
-        command_on: "python /home/homeassistant/.homeassistant/kevo/lock-liberty.py"
-        command_off: "python /home/homeassistant/.homeassistant/kevo/unlock-liberty.py"
-        command_state: "python /home/homeassistant/.homeassistant/kevo/status-liberty.py"
+        command_on: "python2 /home/homeassistant/.homeassistant/kevo/lock-liberty.py"
+        command_off: "python2 /home/homeassistant/.homeassistant/kevo/unlock-liberty.py"
+        command_state: "python2 /home/homeassistant/.homeassistant/kevo/status-liberty.py"
         value_template: '{{ value == "Locked" }}'
   - platform: command_line
     switches:
       sleepytime_tasker:
-        command_on: 'python3 /home/hass/.homeassistant/python_scripts/sleepytime_tasker.py'
+        command_on: 'python3 /home/homeassistant/.homeassistant/python_scripts/sleepytime_tasker.py'
 
 # Text to speech
 tts:
@@ -240,7 +241,6 @@ shell_command: !include shell_commands.yaml
 alert: !include_dir_merge_list alert
 
 # Dir List
-switch: !include_dir_list switch
 zone: !include_dir_list zones
 
 
