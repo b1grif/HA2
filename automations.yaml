@@ -60,7 +60,7 @@
 # Turn on Kitchen lights
     - service: light.turn_on
       entity_id:
-        - light.__level_2_0
+        - light.ge_12724_3way_dimmer_switch_level
 # Turn on bed lights - red flashing
     - service: script.panic1
 # Group all the Sonos
@@ -120,7 +120,7 @@
 # Turn off Kitchen + bed lights
     - service: light.turn_off
       entity_id:
-        - light.__level_2_0
+        - light.ge_12724_3way_dimmer_switch_level
         - group.bed_lights
 # Notifications
     - service: ifttt.trigger
@@ -615,7 +615,7 @@
     - service: light.turn_off
       entity_id:
         - group.bed_lights
-        - light.__level_2_0
+        - light.ge_12724_3way_dimmer_switch_level
 # Event recorder
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Lights off During Day Presence"}
@@ -651,7 +651,7 @@
     - service: light.turn_off
       entity_id:
         - group.bed_lights
-        - light.__level_2_0
+        - light.ge_12724_3way_dimmer_switch_level
 # Event recorder
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Lights Off During Day Sun"}
@@ -920,7 +920,7 @@
     - service: light.turn_off
       entity_id:
 #        - group.all_lights
-        - light.__level_2_0
+        - light.ge_12724_3way_dimmer_switch_level
         - light.billy_bedside_strip
         - light.foot_of_bed
         - light.gina_bedside_strip
@@ -994,7 +994,7 @@
     - service: light.turn_off
       entity_id:
         - group.all_lights
-        - light.__level_2_0
+        - light.ge_12724_3way_dimmer_switch_level
         - light.billy_bedside_strip
         - light.foot_of_bed
         - light.gina_bedside_strip
@@ -1421,7 +1421,7 @@
         - switch.lamp_2
     - service: light.turn_on
       entity_id:
-        - light.__level_2_0
+        - light.ge_12724_3way_dimmer_switch_level
     - service: script.panic1
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Panic Mode"}
@@ -1452,7 +1452,7 @@
     - service: light.turn_off
       entity_id:
         - group.bed_lights
-        - light.__level_2_0
+        - light.ge_12724_3way_dimmer_switch_level
 # WEMO Switches
     - service: switch.turn_off
       entity_id:
@@ -2074,7 +2074,7 @@
 # Turn on kitchen lights
     - service: light.turn_on
       entity_id:
-        - light.__level_2_0
+        - light.ge_12724_3way_dimmer_switch_level
 # 6:00am
     - delay: 00:20:00
 # Disarm alarm system
@@ -2227,7 +2227,7 @@
 # Turn on kitchen lights
     - service: light.turn_on
       entity_id:
-        - light.__level_2_0
+        - light.ge_12724_3way_dimmer_switch_level
 # Disarm alarm system
     - service: alarm_control_panel.alarm_disarm
       entity_id: alarm_control_panel.alarm

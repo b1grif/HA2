@@ -47,11 +47,14 @@ device_tracker:
     hosts: 192.168.0.1-80
     track_new_devices: yes
     home_interval: 10
-#  - platform: owntracks
-#    max_gps_accuracy: 100
+  - platform: owntracks
+    max_gps_accuracy: 100
   - platform: ping
     hosts:
       billsphone: 192.168.0.40 
+  - platform: mqtt
+    devices:
+      bills_6p: /zanzito/bills_phone/location/
 
 ifttt:
   key: !secret ifttt_secret
@@ -72,7 +75,6 @@ media_player:
   - platform: sonos
 
 mqtt:
-#  broker: 192.168.0.30
   broker: griffithshome.duckdns.org
   port: 1883
   client_id: home-assistant-1
@@ -137,10 +139,10 @@ sensor:
         value_template: "{{ 'Online' if is_state('device_tracker.chromecast', 'home') else 'Offline' }}"
   - platform: moon
   - platform: mqtt
-    state_topic: 'owntracks/mosquitto/billsphone'
-    name: 'Bills 6P Battery'
-    unit_of_measurement: '%'
-    value_template: '{{ value_json.batt }}'
+    name: "Bills 6P Battery"
+    state_topic: "zanzito/bills_phone/battery_level"
+    qos: 0
+    unit_of_measurement: "%"
   - platform: nest
     monitored_conditions:
       - temperature
@@ -194,9 +196,9 @@ switch:
   - platform: command_line
     switches:
       frontdoor_kevo:
-        command_on: "python2 /home/homeassistant/.homeassistant/kevo/lock-liberty.py"
-        command_off: "python2 /home/homeassistant/.homeassistant/kevo/unlock-liberty.py"
-        command_state: "python2 /home/homeassistant/.homeassistant/kevo/status-liberty.py"
+        command_on: "python /home/homeassistant/.homeassistant/kevo/lock-liberty.py"
+        command_off: "python /home/homeassistant/.homeassistant/kevo/unlock-liberty.py"
+        command_state: "python /home/homeassistant/.homeassistant/kevo/status-liberty.py"
         value_template: '{{ value == "Locked" }}'
   - platform: command_line
     switches:
