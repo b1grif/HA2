@@ -55,6 +55,7 @@ device_tracker:
   - platform: mqtt
     devices:
       bills_6p: /zanzito/bills_phone/location/
+      ginas_s6: /zanzito/ginas_phone/location/
 
 ifttt:
   key: !secret ifttt_secret
@@ -143,6 +144,11 @@ sensor:
     state_topic: "zanzito/bills_phone/battery_level"
     qos: 0
     unit_of_measurement: "%"
+  - platform: mqtt
+    name: "Ginas S6 Battery"
+    state_topic: "zanzito/ginas_phone/battery_level"
+    qos: 0
+    unit_of_measurement: "%"
   - platform: nest
     monitored_conditions:
       - temperature
@@ -196,9 +202,9 @@ switch:
   - platform: command_line
     switches:
       frontdoor_kevo:
-        command_on: "python /home/homeassistant/.homeassistant/kevo/lock-liberty.py"
-        command_off: "python /home/homeassistant/.homeassistant/kevo/unlock-liberty.py"
-        command_state: "python /home/homeassistant/.homeassistant/kevo/status-liberty.py"
+        command_on: 'python2.7 /home/homeassistant/.homeassistant/kevo/lock-liberty.py'
+        command_off: 'python2.7 /home/homeassistant/.homeassistant/kevo/unlock-liberty.py'
+        command_state: 'python2.7 /home/homeassistant/.homeassistant/kevo/status-liberty.py'
         value_template: '{{ value == "Locked" }}'
   - platform: command_line
     switches:

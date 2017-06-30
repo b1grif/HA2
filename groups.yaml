@@ -159,14 +159,14 @@ living_room:
   - switch.lamp_1
   - switch.lamp_2
   - switch.TV_Switch
-  - binary_sensor.aeotec_zw112_door_window_sensor_6_sensor
+  - binary_sensor.sensor
   - media_player.living_room_tv
 kitchen:
   name: Kitchen
   view: false
   entities:
   - media_player.kitchen
-  - light.level
+  - light.ge_12724_3way_dimmer_switch_level
 basement:
   name: Basement
   view: false
@@ -229,8 +229,13 @@ gina:
   - script.refresh_devices
   - input_boolean.gina_home
   - input_select.gina_status
-  - device_tracker.ginas_s6
+  - sensor.ginas_s6_battery
+  # bluetooth
   - device_tracker.samsungsmg925v
+  # Zanzito
+  - device_tracker.ginas_phone_ginas_phone
+  - device_tracker.ginas_s6
+
 extended_family:
   name: Family
   view: false
