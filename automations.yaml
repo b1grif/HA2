@@ -1204,8 +1204,6 @@
   trigger:
     - platform: homeassistant
       event: start
-#      - platform: event
-#        event_type: homeassistant_start
 
   action:
 
@@ -1432,7 +1430,9 @@
         target: "bills_6p"
         data:
           tag: 'panic_automation'
-
+    - service: notify.living_room_tv
+      data:
+        message: "Panic Button Pressed!"
 ###################################################################
 - id: panic_mode_off
 ###################################################################

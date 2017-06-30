@@ -101,7 +101,7 @@ notify:
     gcm_sender_id: !secret html5_sender_id
   - platform: webostv
     host: 192.168.0.36
-    name: livingroom_tv
+    name: Living Room TV
 
 
 # Weather Prediction
