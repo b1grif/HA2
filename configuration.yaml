@@ -207,12 +207,21 @@ sensor:
     api_key: AIzaSyAScHvjrbjWXIXBKkwT8Q4dyeD5MnJpirI
     origin: device_tracker.bills_phone_bills_phone
     destination: zone.home
-#  - platform: google_travel_time
-#    name: Billy Phone To Work
-#    api_key: AIzaSyAScHvjrbjWXIXBKkwT8Q4dyeD5MnJpirI
-#    origin: device_tracker.bills_phone_bills_phone
-#    destination: zone.work
-
+  - platform: google_travel_time
+    name: Billy Phone To Work
+    api_key: AIzaSyAScHvjrbjWXIXBKkwT8Q4dyeD5MnJpirI
+    origin: device_tracker.bills_phone_bills_phone
+    destination: zone.bill_work_mtl
+  - platform: google_travel_time
+    name: Gina Phone To Home
+    api_key: AIzaSyAScHvjrbjWXIXBKkwT8Q4dyeD5MnJpirI
+    origin: device_tracker.ginas_phone_ginas_phone
+    destination: zone.home
+  - platform: google_travel_time
+    name: Gina Phone To Work
+    api_key: AIzaSyAScHvjrbjWXIXBKkwT8Q4dyeD5MnJpirI
+    origin: device_tracker.ginas_phone_ginas_phone
+    destination: zone.gina_work
 
 # Track the sun
 sun:

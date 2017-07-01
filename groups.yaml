@@ -225,9 +225,11 @@ bill:
   - device_tracker.nexus6p
   # Zanzito
   - device_tracker.bills_phone_bills_phone
-  - device_tracker.billy_6p
+  # NMAP
+  - device_tracker.bills_6p_nmap
   # Travel Time
   - sensor.billy_phone_to_home
+  - sensor.billy_phone_to_work
 gina:
   name: Gina
   view: false
@@ -240,7 +242,11 @@ gina:
   - device_tracker.samsungsmg925v
   # Zanzito
   - device_tracker.ginas_phone_ginas_phone
-  - device_tracker.ginas_s6
+  # NMAP
+  - device_tracker.ginas_s6_nmap
+  # Travel Time
+  - sensor.gina_phone_to_home
+  - sensor.gina_phone_to_work
 # People Groups
 griffiths_devices:
   name: Griffiths Devices
@@ -274,6 +280,8 @@ extended_family:
   control: hidden
   entities:
   - input_boolean.family
+  - device_tracker.tim_maxx_nmap
+  - device_tracker.mom_6p_nmap
 battery_status:
   name: Battery Status
   view: false
