@@ -261,6 +261,12 @@ gina_devices:
   entities:
   - device_tracker.ginas_s6
   - device_tracker.samsungsmg925v
+extended_family_devices:
+  name: Extended Family Devices
+  view: false
+  entities:
+  - device_tracker.tim_maxx_nmap
+  - device_tracker.mom_6p_nmap
 # Family Card
 extended_family:
   name: Extended Family

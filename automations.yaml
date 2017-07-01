@@ -1546,7 +1546,7 @@
   hide_entity: false
   trigger:
     - platform: state
-      entity_id: device_tracker.tim_maxx, device_tracker.mom_6p
+      entity_id: group.extended_family_devices
 #        from: not_home
       to: home
 
@@ -1566,7 +1566,7 @@
   hide_entity: false
   trigger:
     - platform: state
-      entity_id: device_tracker.tim_maxx, device_tracker.mom_6p
+      entity_id: group.extended_family_devices
       from: home
       to: not_home
 
@@ -1586,7 +1586,7 @@
   hide_entity: false
   trigger:
     - platform: state
-      entity_id: device_tracker.ginas_s6
+      entity_id: group.gina_devices
       from: not_home
       to: home
 
@@ -1603,7 +1603,7 @@
   hide_entity: false
   trigger:
     - platform: state
-      entity_id: device_tracker.ginas_s6
+      entity_id: group.gina_devices
       from: home
       to: not_home
 
