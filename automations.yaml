@@ -5,7 +5,7 @@
   hide_entity: false
   trigger:
     - platform: state
-      entity_id: binary_sensor.sensor
+      entity_id: binary_sensor.zwave.aeotec_zw112_door_window_sensor_6
       to: 'on'
 
   condition:
