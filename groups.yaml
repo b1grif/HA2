@@ -1,9 +1,11 @@
+# Panic button
 panic_button:
   name: Panic Button
   view: false
   control: hidden
   entities:
   - input_boolean.panic_mode
+# Cards
 master_control:
   name: Master Control
   view: false
@@ -35,6 +37,7 @@ automation_override:
   - input_boolean.company
   - input_boolean.no_work
   - input_boolean.lights_disable
+# Automation Cards
 automations_morning:
   name: Automations Morning
   view: false
@@ -133,20 +136,21 @@ automations_vacation:
   view: false
   entities:
   - automation.vacation_mode
+# Rooms
 bedroom:
   name: Bedroom
   view: false
   entities:
   - group.bed_lights
-  - binary_sensor.aeotec_zw100_multisensor_6_sensor_6_0
-  - sensor.aeotec_zw100_multisensor_6_temperature_6_1
-  - sensor.aeotec_zw100_multisensor_6_relative_humidity_6_5
-  - sensor.aeotec_zw100_multisensor_6_luminance_6_3
-  - sensor.aeotec_zw100_multisensor_6_ultraviolet_6_27
-  - sensor.aeotec_zw100_multisensor_6_alarm_level_6_1
-  - sensor.aeotec_zw100_multisensor_6_alarm_type_6_0
-  - sensor.aeotec_zw100_multisensor_6_burglar_6_10
-  - sensor.aeotec_zw100_multisensor_6_sourcenodeid_6_2
+  - binary_sensor.aeotec_zw100_multisensor_6_sensor
+  - sensor.aeotec_zw100_multisensor_6_temperature
+  - sensor.aeotec_zw100_multisensor_6_relative_humidity
+  - sensor.aeotec_zw100_multisensor_6_luminance
+  - sensor.aeotec_zw100_multisensor_6_ultraviolet
+  - sensor.aeotec_zw100_multisensor_6_alarm_level
+  - sensor.aeotec_zw100_multisensor_6_alarm_type
+  - sensor.aeotec_zw100_multisensor_6_burglar
+  - sensor.aeotec_zw100_multisensor_6_sourcenodeid
   - media_player.bedroom
 living_room:
   name: Living Room
@@ -159,19 +163,20 @@ living_room:
   - switch.lamp_1
   - switch.lamp_2
   - switch.TV_Switch
-  - binary_sensor.aeotec_zw112_door_window_sensor_6_sensor_3_0
+  - binary_sensor.sensor
   - media_player.living_room_tv
 kitchen:
   name: Kitchen
   view: false
   entities:
   - media_player.kitchen
-  - light.level
+  - light.ge_12724_3way_dimmer_switch_level
 basement:
   name: Basement
   view: false
   entities:
   - media_player.playroom
+# Other Cards
 bandwidth:
   name: Bandwidth
   view: false
@@ -207,40 +212,83 @@ system_monitor:
   - sensor.ssl_cert_expiry
   - updater.updater
   - script.backup_ha
+# People Cards
 bill:
   name: Bill
   view: false
   control: hidden
   entities:
-  - script.refresh_devices
   - input_boolean.billy_home
-  - input_select.billy_status
+  # Battery
   - sensor.bills_6p_battery
+  # bluetooth
   - device_tracker.nexus6p
-  - device_tracker.mosquitto_billsphone
-  - device_tracker.billy_6p
+  # Zanzito
+  - device_tracker.bills_phone_bills_phone
+  # NMAP
+  - device_tracker.bills_6p_nmap
+  # Travel Time
+  - sensor.billy_phone_to_home
+  - sensor.billy_phone_to_work
 gina:
   name: Gina
   view: false
   control: hidden
   entities:
-  - script.refresh_devices
   - input_boolean.gina_home
-  - input_select.gina_status
+  # Battery
+  - sensor.ginas_s6_battery
+  # bluetooth
+  - device_tracker.samsungsmg925v
+  # Zanzito
+  - device_tracker.ginas_phone_ginas_phone
+  # NMAP
+  - device_tracker.ginas_s6_nmap
+  # Travel Time
+  - sensor.gina_phone_to_home
+  - sensor.gina_phone_to_work
+# People Groups
+griffiths_devices:
+  name: Griffiths Devices
+  view: false
+  entities:
+  - groups.billy_devices
+  - groups.gina_devices
+billy_devices:
+  name: Billy Mobile Devices
+  view: false
+  entities:
+  - device_tracker.nexus6p
+  - device_tracker.mosquitto_billsphone
+  - device_tracker.billy_6p
+gina_devices:
+  name: Gina Mobile Devices
+  view: false
+  entities:
   - device_tracker.ginas_s6
   - device_tracker.samsungsmg925v
+extended_family_devices:
+  name: Extended Family Devices
+  view: false
+  entities:
+  - device_tracker.tim_maxx_nmap
+  - device_tracker.mom_6p_nmap
+# Family Card
 extended_family:
-  name: Family
+  name: Extended Family
   view: false
   control: hidden
   entities:
   - input_boolean.family
+  - device_tracker.tim_maxx_nmap
+  - device_tracker.mom_6p_nmap
 battery_status:
   name: Battery Status
   view: false
   entities:
   - sensor.stairs_up_nest_protect_battery_health
   - sensor.front_door_sensor_batt
+
 liberty_nest:
   name: Liberty Nest Devices
   view: false
@@ -291,6 +339,7 @@ testing:
   - input_boolean.testing
   - automation.test_automation
   - automation.test_off_automation
+# Views
 default_view:
   view: true
   icon: mdi:home
@@ -307,25 +356,8 @@ default_view:
   - camera.weather_radar
   - persistent_notification.minimote
   - group.testing
-household:
-  name: Household
-  view: false
-  entities:
-  - input_boolean.billy_home
-  - input_boolean.gina_home
-billy_devices:
-  name: Billy Mobile Devices
-  view: false
-  entities:
-  - device_tracker.nexus6p
-  - device_tracker.mosquitto_billsphone
-  - device_tracker.billy_6p
-gina_devices:
-  name: Gina Mobile Devices
-  view: false
-  entities:
-  - device_tracker.ginas_s6
-  - device_tracker.samsungsmg925v
+  - media_player.spotify
+# Device Cards
 sonos:
   name: All Sonos Speakers
   view: false
@@ -356,6 +388,7 @@ bed_lights:
   - light.foot_of_bed
   - light.gina_bedside_strip
   - light.head_of_bed
+# View
 automations:
   name: Automations
   view: true

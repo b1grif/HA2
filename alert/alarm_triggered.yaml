@@ -6,5 +6,5 @@ alarm_triggered:
   can_acknowledge: True
   skip_first: True
   notifiers:
-    - bills_6p_2
+    - bills_6p
 #    - ginas_text

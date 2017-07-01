@@ -61,7 +61,7 @@ sexy_time:
 vacation_mode:
   name: Vacation Mode
   initial: off
-  icon: mdi:airplane
+  icon: mdi:beach
 
 testing:
   name: Testing
