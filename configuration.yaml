@@ -33,6 +33,11 @@ alarm_control_panel:
   trigger_time: 600
   disarm_after_trigger: false
 
+binary_sensor:
+  - platform: workday
+    country: US
+    state: IL
+    
 camera:
   - platform: generic
     still_image_url: https://radblast.wunderground.com/cgi-bin/radar/WUNIDS_map?station=LOT&brand=wui&num=1&delay=15&type=N0R&frame=0&scale=1.000&noclutter=0&showstorms=0&mapx=400&mapy=240&centerx=400&centery=240&transx=0&transy=0&showlabels=1&severe=0&rainsnow=0&lightning=0&smooth=0&rand=24691024&lat=0&lon=0&label=you
@@ -74,6 +79,9 @@ media_player:
         - netflix
   - platform: plex
   - platform: sonos
+  - platform: spotify
+    client_id: a2e5eaeea9384512838c68cdac474697
+    client_secret: c62ab709bcd8444ca0430e75125961d5
 
 mqtt:
   broker: griffithshome.duckdns.org
@@ -194,6 +202,17 @@ sensor:
 #  - platform: usps
 #    username: !secret usps_username
 #    password: !secret usps_password
+  - platform: google_travel_time
+    name: Billy Phone To Home
+    api_key: AIzaSyAScHvjrbjWXIXBKkwT8Q4dyeD5MnJpirI
+    origin: device_tracker.bills_phone_bills_phone
+    destination: zone.home
+#  - platform: google_travel_time
+#    name: Billy Phone To Work
+#    api_key: AIzaSyAScHvjrbjWXIXBKkwT8Q4dyeD5MnJpirI
+#    origin: device_tracker.bills_phone_bills_phone
+#    destination: zone.work
+
 
 # Track the sun
 sun:

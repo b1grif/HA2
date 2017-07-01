@@ -543,40 +543,6 @@
           tag: 'bedtime_automation'
 
 ###################################################################
-- id: bedtime_start_timer
-###################################################################
-  alias: Start timer if input_boolean is turned on
-  trigger:
-    platform: state
-    entity_id: input_boolean.bedtime
-    from: 'off'
-    to: 'on'
-  action:
-    service: script.start_bedtime_timer
-
-##################################################################
-- id: bedtime_stop_timer
-###################################################################
-  alias: Stop timer if input_boolean is turned off
-  trigger:
-    platform: state
-    entity_id: input_boolean.bedtime
-    from: 'on'
-    to: 'off'
-  action:
-    service: homeassistant.turn_on
-    entity_id: script.stop_bedtime_timer
-
-##################################################################
-- id: HA_startup_stop_timer
-###################################################################
-  alias: HA Startup Stop Timer
-  trigger:
-    - platform: homeassistant
-      event: start
-  action:
-    service: shell_command.stop_timer
-###################################################################
 - id: lights_off_during_day_presence
 ###################################################################
   alias: Lights off During Day Presence
@@ -1206,10 +1172,8 @@
       event: start
 
   action:
-
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"HA Startup Notification"}
-
     - service: notify.html5
       data:
         title: "Home Assistant"
@@ -1423,6 +1387,10 @@
     - service: script.panic1
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Panic Mode"}
+    - service: script.zanzito_send_notification
+      data:
+        dest_id: 'bills_phone'
+        message: 'Panic Button Pressed!'
     - service: notify.html5
       data:
         title: "Panic Notification"
@@ -1855,58 +1823,25 @@
 
 
 ###################################################################
-- id: vacation_mode
+- id: vacation_mode_actions
 ###################################################################
   alias: Vacation Mode
   hide_entity: false
   trigger:
-    - platform: state
-      entity_id: input_boolean.vacation_mode
-      to: 'on'
+    - platform: time
+      at: '19:00:00'
 
-#    condition:
-#      condition: or
-#      conditions:
-#        - condition: state
-#          entity_id: input_boolean.billy_home
-#          state: 'on'
-#        - condition: state
-#          entity_id: input_boolean.gina_home
-#          state: 'on'
+  condition:
+    condition: or
+    conditions:
+      - condition: state
+        entity_id: input_boolean.vacation_mode
+        state: 'on'
 
   action:
-# Turn Upstairs lights on
-#      - service: light.turn_on
-#        entity_id:
-#          - group.bed_lights
-#        data:
-#          brightness: 30
-#          xy_color: [ 0.4571, 0.4453 ]
-# Wait 3 minutes
-#      - delay: 00:03:00
-# Turn off Living room lights and TV
     - service: switch.turn_on
       entity_id:
         - switch.lamp_1
-# Stop lights from turning back on
-#      - service: homeassistant.turn_on
-#        entity_id: input_boolean.lights_disable
-# Arm Security
-#      - service: alarm_control_panel.alarm_arm_home
-#        entity_id: alarm_control_panel.alarm
-# Lock Kevo
-#      - service: switch.turn_on
-#        entity_id: switch.frontdoor_kevo
-# Start Tasker Sleepy Time
-#      - service: switch.turn_on
-#        entity_id: switch.sleepytime_tasker
-# Start Sleepytime on bedroom Sonos
-#      - service: script.bedtime_music
-#      - service: shell_command.sonos_playlist_sleepy_time
-# Turn off bedlights
-#      - service: light.turn_off
-#        entity_id:
-#          - group.bed_lights
 # Event Recorder spreadsheet
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Vacation Mode"}
@@ -1920,64 +1855,26 @@
           tag: 'vacation_mode_automation'
 
 ###################################################################
-- id: vacation_mode_on_after_24_hours
+- id: vacation_mode_input_boolean
 ###################################################################
-  alias: Vacation Mode On After 24 hours
+  alias: Vacation Mode Input Boolean
   hide_entity: false
   trigger:
     - platform: state
-      entity_id: group.household
-      from: 'on'
-      to: 'off'
+      entity_id: group.griffiths_devices
+      to: 'not_home'
       for:
         hours: 24
         minutes: 0
         seconds: 0
 
   action:
-# Turn Upstairs lights on
-#      - service: light.turn_on
-#        entity_id:
-#          - group.bed_lights
-#        data:
-#          brightness: 30
-#          xy_color: [ 0.4571, 0.4453 ]
-# Wait 3 minutes
-#      - delay: 00:03:00
-# Turn off Living room lights and TV
-#      - service: switch.turn_on
-#        entity_id:
-#          - switch.lamp_1
 # Stop lights from turning back on
-#      - service: homeassistant.turn_on
-#        entity_id: input_boolean.lights_disable
-# Arm Security
-#      - service: alarm_control_panel.alarm_arm_home
-#        entity_id: alarm_control_panel.alarm
-# Lock Kevo
-#      - service: switch.turn_on
-#        entity_id: switch.frontdoor_kevo
-# Start Tasker Sleepy Time
-#      - service: switch.turn_on
-#        entity_id: switch.sleepytime_tasker
-# Start Sleepytime on bedroom Sonos
-#      - service: script.bedtime_music
-#      - service: shell_command.sonos_playlist_sleepy_time
-# Turn off bedlights
-#      - service: light.turn_off
-#        entity_id:
-#          - group.bed_lights
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.vacation_mode
 # Event Recorder spreadsheet
     - service: ifttt.trigger
-      data: {"event":"Event_Recorder", "value1":"Vacation Mode On After 24 hours"}
-# HTML5 Notification
-    - service: notify.html5
-      data:
-        title: "Vacation Mode Notification"
-        message: 'Vacation Mode On After 24 hours'
-        target: "bills_6p"
-        data:
-          tag: 'vacation_mode_automation'
+      data: {"event":"Event_Recorder", "value1":"Vacation Mode Input Boolean"}
 
 ###################################################################
 - id: billy_wake_up

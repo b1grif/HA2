@@ -1,9 +1,11 @@
+# Panic button
 panic_button:
   name: Panic Button
   view: false
   control: hidden
   entities:
   - input_boolean.panic_mode
+# Cards
 master_control:
   name: Master Control
   view: false
@@ -35,6 +37,7 @@ automation_override:
   - input_boolean.company
   - input_boolean.no_work
   - input_boolean.lights_disable
+# Automation Cards
 automations_morning:
   name: Automations Morning
   view: false
@@ -133,6 +136,7 @@ automations_vacation:
   view: false
   entities:
   - automation.vacation_mode
+# Rooms
 bedroom:
   name: Bedroom
   view: false
@@ -172,6 +176,7 @@ basement:
   view: false
   entities:
   - media_player.playroom
+# Other Cards
 bandwidth:
   name: Bandwidth
   view: false
@@ -207,37 +212,58 @@ system_monitor:
   - sensor.ssl_cert_expiry
   - updater.updater
   - script.backup_ha
+# People Cards
 bill:
   name: Bill
   view: false
   control: hidden
   entities:
-  - script.refresh_devices
   - input_boolean.billy_home
-  - input_select.billy_status
+  # Battery
   - sensor.bills_6p_battery
   # bluetooth
   - device_tracker.nexus6p
   # Zanzito
   - device_tracker.bills_phone_bills_phone
   - device_tracker.billy_6p
+  # Travel Time
+  - sensor.billy_phone_to_home
 gina:
   name: Gina
   view: false
   control: hidden
   entities:
-  - script.refresh_devices
   - input_boolean.gina_home
-  - input_select.gina_status
+  # Battery
   - sensor.ginas_s6_battery
   # bluetooth
   - device_tracker.samsungsmg925v
   # Zanzito
   - device_tracker.ginas_phone_ginas_phone
   - device_tracker.ginas_s6
-
+# People Groups
+griffiths_devices:
+  name: Griffiths Devices
+  view: false
+  entities:
+  - groups.billy_devices
+  - groups.gina_devices
+billy_devices:
+  name: Billy Mobile Devices
+  view: false
+  entities:
+  - device_tracker.nexus6p
+  - device_tracker.mosquitto_billsphone
+  - device_tracker.billy_6p
+gina_devices:
+  name: Gina Mobile Devices
+  view: false
+  entities:
+  - device_tracker.ginas_s6
+  - device_tracker.samsungsmg925v
+# Family Card
 extended_family:
-  name: Family
+  name: Extended Family
   view: false
   control: hidden
   entities:
@@ -248,6 +274,7 @@ battery_status:
   entities:
   - sensor.stairs_up_nest_protect_battery_health
   - sensor.front_door_sensor_batt
+
 liberty_nest:
   name: Liberty Nest Devices
   view: false
@@ -298,6 +325,7 @@ testing:
   - input_boolean.testing
   - automation.test_automation
   - automation.test_off_automation
+# Views
 default_view:
   view: true
   icon: mdi:home
@@ -314,25 +342,8 @@ default_view:
   - camera.weather_radar
   - persistent_notification.minimote
   - group.testing
-household:
-  name: Household
-  view: false
-  entities:
-  - input_boolean.billy_home
-  - input_boolean.gina_home
-billy_devices:
-  name: Billy Mobile Devices
-  view: false
-  entities:
-  - device_tracker.nexus6p
-  - device_tracker.mosquitto_billsphone
-  - device_tracker.billy_6p
-gina_devices:
-  name: Gina Mobile Devices
-  view: false
-  entities:
-  - device_tracker.ginas_s6
-  - device_tracker.samsungsmg925v
+  - media_player.spotify
+# Device Cards
 sonos:
   name: All Sonos Speakers
   view: false
@@ -363,6 +374,7 @@ bed_lights:
   - light.foot_of_bed
   - light.gina_bedside_strip
   - light.head_of_bed
+# View
 automations:
   name: Automations
   view: true
