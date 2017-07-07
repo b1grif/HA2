@@ -26,7 +26,6 @@ on_demand:
   - input_boolean.media_mode
   - input_boolean.vacation_mode
   - input_boolean.sexy_time
-  - input_select.sonos_playlist
 automation_override:
   name: Automation Override
   view: false
@@ -212,6 +211,7 @@ system_monitor:
   - sensor.ssl_cert_expiry
   - updater.updater
   - script.backup_ha
+  - script.pull_from_github
 # People Cards
 bill:
   name: Bill
@@ -252,21 +252,22 @@ griffiths_devices:
   name: Griffiths Devices
   view: false
   entities:
-  - groups.billy_devices
-  - groups.gina_devices
+  - group.billy_devices
+  - group.gina_devices
 billy_devices:
   name: Billy Mobile Devices
   view: false
   entities:
   - device_tracker.nexus6p
   - device_tracker.mosquitto_billsphone
-  - device_tracker.billy_6p
+  - device_tracker.bills_6p_nmap
 gina_devices:
   name: Gina Mobile Devices
   view: false
   entities:
-  - device_tracker.ginas_s6
+  - device_tracker.ginas_phone_ginas_phone
   - device_tracker.samsungsmg925v
+  - device_tracker.ginas_s6_nmap
 extended_family_devices:
   name: Extended Family Devices
   view: false
