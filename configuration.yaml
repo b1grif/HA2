@@ -287,6 +287,94 @@ shell_command: !include shell_commands.yaml
 # with each file content being an entry in the list
 alert: !include_dir_merge_list alert
 
+script:
+  backup_ha:
+    sequence:
+#      - service: shell_command.mount_dir
+      - service: shell_command.backup_folder
+      - service: shell_command.backup_configuration
+      - service: notify.html5
+        data:
+          title: "Backing Up HA Configs"
+          message: 'Backup started'
+          target: "bills_6p"
+          data:
+            tag: 'backup_script'
+  bed_colorloop:
+    sequence:
+      - service: light.turn_on
+        data:
+          entity_id: group.bed_lights
+          effect: colorloop
+          brightness: 250
+          transition: 5
+  bedtime_music:
+    sequence:
+      - service: media_player.select_source
+        data:
+          entity_id: media_player.bedroom
+          source: 'River Flows In You - Original'
+  panic1:
+    sequence:
+      - service: light.turn_on
+        entity_id:
+          - group.bed_lights
+        data:
+          brightness: 250
+          xy_color: [ 0.329, 0.35 ]
+      - service: light.turn_on
+        data:
+          entity_id: group.bed_lights
+          flash: short
+          brightness: 250
+          xy_color: [ 0.704, 0.296 ]
+      - delay:
+          seconds: 3
+      - service: script.panic2
+  panic2:
+    sequence:
+      - service: light.turn_on
+        data:
+          entity_id: group.bed_lights
+          flash: short
+          brightness: 250
+          xy_color: [ 0.704, 0.296 ]
+      - delay:
+          seconds: 3
+      - service: script.panic1
+  pull_from_github:
+    sequence:
+      - service: shell_command.git_pull
+      - service: homeassistant.restart
+  sonos_tts:
+    sequence:
+      - service: media_player.sonos_snapshot
+        data_template:
+          entity_id: "{{ sonos_entity }}"
+      - service: media_player.sonos_unjoin
+        data_template:
+          entity_id: "{{ sonos_entity }}"
+      - service: media_player.volume_set
+        data_template:
+          entity_id: "{{ sonos_entity }}"
+          volume_level: "{{ volume }}"
+      - service: tts.voicerss_say
+        data_template:
+          entity_id: "{{ sonos_entity }}"
+          message: "{{ message }}"
+      - delay: "{{ delay }}"
+      - service: media_player.sonos_restore
+        data_template:
+          entity_id: "{{ sonos_entity }}"
+  zanzito_send_notification:
+    sequence:
+      - service: mqtt.publish
+        data_template:
+          topic: 'zanzito/{{ dest_id }}/notification'
+          payload: '{{ message }}'
+          qos: 1
+          retain: 0
+
 # Dir List
 zone: !include_dir_list zones
 

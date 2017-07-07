@@ -5,7 +5,7 @@
   hide_entity: false
   trigger:
     - platform: state
-      entity_id: binary_sensor.zwave.aeotec_zw112_door_window_sensor_6
+      entity_id: binary_sensor.aeotec_zw112_door_window_sensor_6
       to: 'on'
 
   condition:
@@ -49,7 +49,9 @@
       data:
         title: "Alarm Notification"
         message: 'Alarm was triggered!'
-        target: "bills_6p"
+        target: 
+          - "bills_6p"
+          - "ginas_s6"
         data:
           tag: 'alarm_triggered'
 # Turn on Living Room lamps
@@ -93,7 +95,7 @@
     - service: media_player.play_media
       data_template:
         entity_id: media_player.living_room
-        media_content_id: http://192.168.0.27:8123/local/policesiren.mp3
+        media_content_id: http://192.168.0.30:8123/local/policesiren.mp3
         media_content_type: audio/mp3
 
 ###################################################################
@@ -129,7 +131,9 @@
       data:
         title: "Alarm Notification"
         message: 'Alarm was triggered but was cleared. Alarm system is currently disabled'
-        target: "bills_6p"
+        target: 
+          - "bills_6p"
+          - "ginas_s6"
         data:
           tag: 'alarm_triggered'
 
@@ -174,7 +178,9 @@
       data:
         title: "Billy Arrive Home Notification"
         message: 'Billy Arrive Home After 8pm'
-        target: "bills_6p"
+        target:
+          - "bills_6p"
+          - "ginas_s6"
         data:
           tag: 'home_status'
 
@@ -211,7 +217,9 @@
       data:
         title: "Billy Arrive Home Notification"
         message: 'Billy Arrive Home Before 8pm'
-        target: "bills_6p"
+        target:
+          - "bills_6p"
+          - "ginas_s6"
         data:
           tag: 'home_status'
     - service: notify.living_room_tv
@@ -298,7 +306,9 @@
       data:
         title: "Family Arrive At The House After 8PM"
         message: 'Family Arrive At The House After 8PM'
-        target: "bills_6p"
+        target:
+          - "bills_6p"
+          - "ginas_s6"
         data:
           tag: 'home_status'
 ###################################################################
@@ -333,7 +343,9 @@
       data:
         title: "Family Arrive At The House Before 8PM"
         message: 'Family Arrive At The House Before 8PM'
-        target: "bills_6p"
+        target:
+          - "bills_6p"
+          - "ginas_s6"
         data:
           tag: 'home_status'
 
@@ -921,7 +933,9 @@
       data:
         title: "Not Home Notification"
         message: 'No one is home'
-        target: "bills_6p"
+        target:
+          - "bills_6p"
+          - "ginas_s6"
         data:
           tag: 'home_status'
 
@@ -991,7 +1005,9 @@
       data:
         title: "Not Home Notification"
         message: 'No one is home'
-        target: "bills_6p"
+        target:
+          - "bills_6p"
+          - "ginas_s6"
         data:
           tag: 'home_status'
 
@@ -1041,7 +1057,9 @@
       data:
         title: "Bryn Mawr Nest CO Emergency Notification"
         message: 'Bryn Mawr Nest Protect CO Emergency'
-        target: "bills_6p"
+        target:
+          - "bills_6p"
+          - "ginas_s6"
         data:
           tag: 'bryn_mawr_nest_automation'
 
@@ -1068,7 +1086,9 @@
       data:
         title: "Bryn Mawr Nest CO Warning Notification"
         message: 'Bryn Mawr Nest Protect CO Warning'
-        target: "bills_6p"
+        target:
+          - "bills_6p"
+          - "ginas_s6"
         data:
           tag: 'bryn_mawr_nest_automation'
 
@@ -1095,7 +1115,9 @@
       data:
         title: "Bryn Mawr Nest Smoke Emergency Notification"
         message: 'Bryn Mawr Nest Protect Smoke Emergency'
-        target: "bills_6p"
+        target:
+          - "bills_6p"
+          - "ginas_s6"
         data:
           tag: 'bryn_mawr_nest_automation'
 
@@ -1122,7 +1144,9 @@
       data:
         title: "Bryn Mawr Nest Smoke Warning Notification"
         message: 'Bryn Mawr Nest Protect Smoke Warning'
-        target: "bills_6p"
+        target:
+          - "bills_6p"
+          - "ginas_s6"
         data:
           tag: 'bryn_mawr_nest_automation'
 
@@ -1238,7 +1262,9 @@
       data:
         title: "Liberty Nest CO Emergency Notification"
         message: 'Liberty Nest Protect CO Emergency'
-        target: "bills_6p"
+        target:
+          - "bills_6p"
+          - "ginas_s6"
         data:
           tag: 'liberty_nest_automation'
 
@@ -1263,7 +1289,9 @@
       data:
         title: "Liberty Nest CO Warning Notification"
         message: 'Liberty Nest Protect CO Warning'
-        target: "bills_6p"
+        target:
+          - "bills_6p"
+          - "ginas_s6"
         data:
           tag: 'liberty_nest_automation'
 
@@ -1288,7 +1316,9 @@
       data:
         title: "Liberty Nest Smoke Emergency Notification"
         message: 'Liberty Nest Protect Smoke Emergency'
-        target: "bills_6p"
+        target:
+          - "bills_6p"
+          - "ginas_s6"
         data:
           tag: 'liberty_nest_automation'
 
@@ -1313,7 +1343,9 @@
       data:
         title: "Liberty Nest Smoke Warning Notification"
         message: 'Liberty Nest Protect Smoke Warning'
-        target: "bills_6p"
+        target:
+          - "bills_6p"
+          - "ginas_s6"
         data:
           tag: 'liberty_nest_automation'
 
@@ -1355,7 +1387,9 @@
       data:
         title: "Low Battery Notification"
         message: 'Billys phone has a low battery'
-        target: "bills_6p"
+        target:
+          - "bills_6p"
+          - "ginas_s6"
         data:
           tag: 'low_battery_automation'
 #      - service: notify.html5
@@ -1395,7 +1429,9 @@
       data:
         title: "Panic Notification"
         message: 'Panic Button Pressed!'
-        target: "bills_6p"
+        target:
+          - "bills_6p"
+          - "ginas_s6"
         data:
           tag: 'panic_automation'
     - service: notify.living_room_tv
@@ -1432,7 +1468,9 @@
       data:
         title: "Panic Notification"
         message: 'Panic Button Cleared'
-        target: "bills_6p"
+        target:
+          - "bills_6p"
+          - "ginas_s6"
         data:
           tag: 'panic_automation'
 
@@ -1823,9 +1861,9 @@
 
 
 ###################################################################
-- id: vacation_mode_actions
+- id: vacation_mode_lights_on
 ###################################################################
-  alias: Vacation Mode
+  alias: Vacation Mode Lights On
   hide_entity: false
   trigger:
     - platform: time
@@ -1844,13 +1882,49 @@
         - switch.lamp_1
 # Event Recorder spreadsheet
     - service: ifttt.trigger
-      data: {"event":"Event_Recorder", "value1":"Vacation Mode"}
+      data: {"event":"Event_Recorder", "value1":"Vacation Mode Lights On"}
 # HTML5 Notification
     - service: notify.html5
       data:
         title: "Vacation Mode Notification"
-        message: 'Vacation Mode Started'
-        target: "bills_6p"
+        message: 'Vacation Mode - lights on'
+        target:
+          - "bills_6p"
+          - "ginas_s6"
+        data:
+          tag: 'vacation_mode_automation'
+
+###################################################################
+- id: vacation_mode_lights_off
+###################################################################
+  alias: Vacation Mode Lights Off
+  hide_entity: false
+  trigger:
+    - platform: time
+      at: '23:00:00'
+
+  condition:
+    condition: or
+    conditions:
+      - condition: state
+        entity_id: input_boolean.vacation_mode
+        state: 'on'
+
+  action:
+    - service: switch.turn_off
+      entity_id:
+        - switch.lamp_1
+# Event Recorder spreadsheet
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Vacation Mode Lights Off"}
+# HTML5 Notification
+    - service: notify.html5
+      data:
+        title: "Vacation Mode Notification"
+        message: 'Vacation Mode - lights off'
+        target:
+          - "bills_6p"
+          - "ginas_s6"
         data:
           tag: 'vacation_mode_automation'
 

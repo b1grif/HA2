@@ -28,3 +28,6 @@ sonos_control_next: /usr/bin/curl -X GET http://192.168.0.27:5005/kitchen/next
 # Timer commands
 start_timer: 'echo $(($(date +%s) + 180)) > /tmp/hass_timer'
 stop_timer: '/bin/rm -f /tmp/hass_timer'
+
+# Pull Config from Git
+git_pull: bash /home/homeassistant/.homeassistant/gitpull.sh

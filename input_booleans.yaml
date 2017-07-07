@@ -69,23 +69,23 @@ testing:
   icon: mdi:biohazard
   
 # Not used anymore 
-alarm_tripped:
-  name: Alarm Tripped
-  initial: off
-  icon: mdi:exclamation
-
-alarm_enabled:
-  name: Alarm Enabled
-  initial: off
-  icon: mdi:shield-outline
-
-disable_lock:
-  name: Disable Lock
-  initial: off
-  icon: mdi:lock-plus
-
-home_away:
-  name: Disable Home / Away Mode
-  initial: off
-  icon: mdi:map-marker-off
+#alarm_tripped:
+#  name: Alarm Tripped
+#  initial: off
+#  icon: mdi:exclamation
+#
+#alarm_enabled:
+#  name: Alarm Enabled
+#  initial: off
+#  icon: mdi:shield-outline
+#
+#disable_lock:
+#  name: Disable Lock
+#  initial: off
+#  icon: mdi:lock-plus
+#
+#home_away:
+#  name: Disable Home / Away Mode
+#  initial: off
+#  icon: mdi:map-marker-off
 

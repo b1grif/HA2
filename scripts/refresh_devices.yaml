@@ -1,5 +1,0 @@
-sequence:
-  service: mqtt.publish
-  data:
-    topic: "owntracks/mosquitto/billsphone/cmd"
-    payload_template: '{"_type":"cmd","action":"reportLocation"}'
