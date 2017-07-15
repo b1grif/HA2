@@ -356,7 +356,6 @@ default_view:
   - group.weather
   - camera.weather_radar
   - persistent_notification.minimote
-  - group.testing
   - media_player.spotify
 # Device Cards
 sonos:
