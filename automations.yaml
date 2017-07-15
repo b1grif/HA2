@@ -5,7 +5,7 @@
   hide_entity: false
   trigger:
     - platform: state
-      entity_id: binary_sensor.aeotec_zw112_door_window_sensor_6
+      entity_id: binary_sensor.aeotec_zw112_door_window_sensor_6_sensor
       to: 'on'
 
   condition:
@@ -300,7 +300,6 @@
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Family Arrive At The House After 8PM"}
 # Notify Gina
-
 # Notify Billy
     - service: notify.html5
       data:
@@ -883,6 +882,9 @@
         entity_id: input_boolean.company
         state: "off"
       - condition: state
+        entity_id: input_boolean.family
+        state: "off"
+      - condition: state
         entity_id: input_boolean.vacation_mode
         state: 'off'
       - condition: state
@@ -957,6 +959,9 @@
         state: "off"
       - condition: state
         entity_id: input_boolean.company
+        state: "off"
+      - condition: state
+        entity_id: input_boolean.family
         state: "off"
       - condition: state
         entity_id: input_boolean.vacation_mode
