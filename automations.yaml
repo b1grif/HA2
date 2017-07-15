@@ -183,11 +183,14 @@
           - "ginas_s6"
         data:
           tag: 'home_status'
+    - service: notify.living_room_tv
+      data:
+        message: "Billy Arrive Home After 8pm"
 
 ###################################################################
-- id: arrival_billy_before_8pm
+- id: arrival_billy_before_8pm_music
 ###################################################################
-  alias: Arrival Billy Before 8pm
+  alias: Arrival Billy Before 8pm With Music
   hide_entity: false
   trigger:
     - platform: state
@@ -200,6 +203,9 @@
       before: '20:00:00'
     - condition: state
       entity_id: input_boolean.sexy_time
+      state: 'off'
+    - condition: state
+      entity_id: input_boolean.media_playing
       state: 'off'
 
   action:
@@ -274,6 +280,55 @@
 #          media_content_id: !secret dog_bark_mp3
 #          media_content_type: audio/mp4
 
+###################################################################
+- id: arrival_billy_before_8pm
+###################################################################
+  alias: Arrival Billy Before 8pm
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: input_boolean.billy_home
+      to: 'on'
+
+  condition:
+    - condition: time
+      after: '08:00:00'
+      before: '20:00:00'
+    - condition: state
+      entity_id: input_boolean.sexy_time
+      state: 'off'
+    - condition: state
+      entity_id: input_boolean.media_playing
+      state: 'on'
+
+  action:
+# Unlock Kevo
+    - service: switch.turn_off
+      entity_id: switch.frontdoor_kevo
+# Alarm disabled
+    - service: alarm_control_panel.alarm_disarm
+      entity_id: alarm_control_panel.alarm
+# Event Recorder
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Billy Arrive Home Before 8pm"}
+# Notification
+    - service: notify.html5
+      data:
+        title: "Billy Arrive Home Notification"
+        message: 'Billy Arrive Home Before 8pm'
+        target:
+          - "bills_6p"
+          - "ginas_s6"
+        data:
+          tag: 'home_status'
+    - service: notify.living_room_tv
+      data:
+        message: "Billy Arrive Home Before 8pm"
+# Turn on TV
+    - service: switch.turn_on
+      entity_id:
+        - switch.tv_switch
+
 ###################################################################  
 - id: arrival_family_after_8pm
 ###################################################################
@@ -310,6 +365,9 @@
           - "ginas_s6"
         data:
           tag: 'home_status'
+    - service: notify.living_room_tv
+      data:
+        message: "Family Arrive Home After 8pm"
 ###################################################################
 - id: arrival_family_before_8pm
 ###################################################################
@@ -347,7 +405,9 @@
           - "ginas_s6"
         data:
           tag: 'home_status'
-
+    - service: notify.living_room_tv
+      data:
+        message: "Family Arrive Home Before 8pm"
 ###################################################################
 - id: arrival_gina_after_8pm
 ###################################################################
@@ -387,7 +447,9 @@
         target: "bills_6p"
         data:
           tag: 'home_status'
-
+    - service: notify.living_room_tv
+      data:
+        message: "Gina Arrive Home After 8pm"
 ###################################################################
 - id: arrival_gina_before_8pm
 ###################################################################
@@ -427,7 +489,9 @@
         target: "bills_6p"
         data:
           tag: 'home_status'
-
+    - service: notify.living_room_tv
+      data:
+        message: "Gina Arrive Home Before 8pm"
 ###################################################################
 - id: bedtime
 ###################################################################
@@ -753,14 +817,8 @@
       to: '8'
 
   condition:
-    condition: or
+    condition: and
     conditions:
-      - condition: state
-        entity_id: input_select.billy_status
-        state: "sleeping"
-      - condition: state
-        entity_id: input_select.gina_status
-        state: "sleeping"
 # The sun is down
       - condition: state
         entity_id: sun.sun
@@ -771,7 +829,7 @@
         state: 'off'
 # Only turn lights on if there isnt any light in the room
       - condition: numeric_state
-        entity_id: sensor.aeotec_zw100_multisensor_6_luminance_6_3
+        entity_id: sensor.aeotec_zw100_multisensor_6_luminance
         above: 1
 
   action:
@@ -832,12 +890,6 @@
       - condition: state
         entity_id: input_boolean.gina_home
         state: 'on'
-      - condition: state
-        entity_id: input_select.billy_status
-        state: "home"
-      - condition: state
-        entity_id: input_select.gina_status
-        state: "home"
 
   action:
 # Lock Kevo
@@ -1397,13 +1449,6 @@
           - "ginas_s6"
         data:
           tag: 'low_battery_automation'
-#      - service: notify.html5
-#        data:
-#          title: "Low Battery Notification"
-#          message: 'Billys phone has a low battery'
-#          target: "ginas_s6"
-#          data:
-#            tag: 'low_battery_automation'
 
 ###################################################################
 - id: panic_mode_on
@@ -1832,7 +1877,6 @@
       data: {"event":"Event_Recorder", "value1":"Start Sonos Playlist Jesus Music"}
 #      - service: ifttt.trigger
 #        data: {"event":"billy_ifttt", "value1":"{{states.input_select.sonos_playlist.state.lower().replace(" ", "").replace("-", "")}}"}
-
 
 ###################################################################
 - id: start_sonos_playlist_pick_one
