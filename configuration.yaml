@@ -65,6 +65,8 @@ device_tracker:
 ifttt:
   key: !secret ifttt_secret
 
+media_extractor:
+
 media_player:
   - platform: cast
     host: 192.168.0.31
@@ -80,8 +82,9 @@ media_player:
   - platform: plex
   - platform: sonos
   - platform: spotify
-    client_id: a2e5eaeea9384512838c68cdac474697
-    client_secret: c62ab709bcd8444ca0430e75125961d5
+    client_id: !secret spotify_id
+    client_secret: !secret spotify_secret
+    
 
 mqtt:
   broker: griffithshome.duckdns.org
@@ -204,33 +207,33 @@ sensor:
 #    password: !secret usps_password
   - platform: google_travel_time
     name: Billy Phone To Home
-    api_key: AIzaSyAScHvjrbjWXIXBKkwT8Q4dyeD5MnJpirI
+    api_key: !secret maps_api
     origin: device_tracker.bills_phone_bills_phone
     destination: zone.home
   - platform: google_travel_time
     name: Billy Phone To Work
-    api_key: AIzaSyAScHvjrbjWXIXBKkwT8Q4dyeD5MnJpirI
+    api_key: !secret maps_api
     origin: device_tracker.bills_phone_bills_phone
     destination: zone.bill_work_mtl
   - platform: google_travel_time
     name: Gina Phone To Home
-    api_key: AIzaSyAScHvjrbjWXIXBKkwT8Q4dyeD5MnJpirI
+    api_key: !secret maps_api
     origin: device_tracker.ginas_phone_ginas_phone
     destination: zone.home
   - platform: google_travel_time
     name: Gina Phone To Work
-    api_key: AIzaSyAScHvjrbjWXIXBKkwT8Q4dyeD5MnJpirI
+    api_key: !secret maps_api
     origin: device_tracker.ginas_phone_ginas_phone
     destination: zone.gina_work
   - platform: template
     sensors:
       front_door_sensor:
-        value_template: '{% if is_state("binary_sensor.aeotec_zw112_door_window_sensor_6", "on") %}open{% else %}closed{% endif %}'
+        value_template: '{% if is_state("binary_sensor.aeotec_zw112_door_window_sensor_6_sensor", "on") %}open{% else %}closed{% endif %}'
         friendly_name: 'Front Door Sensor'
   - platform: template
     sensors:
       front_door_sensor_batt:
-        value_template: "{{ states.binary_sensor.aeotec_zw112_door_window_sensor_6.attributes.battery_level }}"
+        value_template: "{{ states.binary_sensor.aeotec_zw112_door_window_sensor_6_sensor.attributes.battery_level }}"
         friendly_name: 'Front Door Sensor'
         unit_of_measurement: '%'
 

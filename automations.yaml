@@ -1262,6 +1262,9 @@
         target: "bills_6p"
         data:
           tag: 'ha_startup_notification'
+    - service: notify.living_room_tv
+      data:
+        message: "Home Assistant is up and running"
     - service: persistent_notification.create
       data:
         message: "Red1-Lamp1 on/off=2-Lock Door/Bedtime=3-Go Time On/Off=4-Panic Mode On/Off  Blue1-Lamp1 on/off=2-Lock Door/Bedtime=3-Movie On/Off=4-Panic Mode On/Off"

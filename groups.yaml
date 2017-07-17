@@ -11,6 +11,7 @@ master_control:
   view: false
   control: hidden
   entities:
+  - sensor.front_door_sensor
   - switch.frontdoor_kevo
   - group.sonos
   - group.all_hue_lights
