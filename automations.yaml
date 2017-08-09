@@ -190,6 +190,7 @@
 ###################################################################
 - id: arrival_billy_before_8pm_music
 ###################################################################
+# Turn on TV and Play music
   alias: Arrival Billy Before 8pm With Music
   hide_entity: false
   trigger:
@@ -301,6 +302,7 @@
       entity_id: input_boolean.media_playing
       state: 'on'
 
+
   action:
 # Unlock Kevo
     - service: switch.turn_off
@@ -324,10 +326,6 @@
     - service: notify.living_room_tv
       data:
         message: "Billy Arrive Home Before 8pm"
-# Turn on TV
-    - service: switch.turn_on
-      entity_id:
-        - switch.tv_switch
 
 ###################################################################  
 - id: arrival_family_after_8pm
@@ -394,7 +392,6 @@
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Family Arrive At The House Before 8PM"}
 # Notify Gina
-
 # Notify Billy
     - service: notify.html5
       data:
@@ -433,10 +430,6 @@
 # Alarm disabled
     - service: alarm_control_panel.alarm_disarm
       entity_id: alarm_control_panel.alarm
-# Turn on the TV
-    - service: switch.turn_on
-      entity_id:
-        - switch.tv_switch
 
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Gina Arrive Home After 8pm"}
@@ -475,10 +468,6 @@
 # Alarm disabled
     - service: alarm_control_panel.alarm_disarm
       entity_id: alarm_control_panel.alarm
-# Turn on the TV
-    - service: switch.turn_on
-      entity_id:
-        - switch.tv_switch
 
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Gina Arrive Home Before 8pm"}
@@ -526,6 +515,12 @@
       data:
         brightness: 30
         xy_color: [ 0.4571, 0.4453 ]
+# Lock Kevo
+    - service: switch.turn_on
+      entity_id: switch.frontdoor_kevo
+# Arm Security
+    - service: alarm_control_panel.alarm_arm_home
+      entity_id: alarm_control_panel.alarm
 # HTML5 Notification
 #      - service: notify.html5
 #        data:
@@ -535,7 +530,7 @@
 #          data:
 #            tag: 'bedtime_automation'
 # Wait 1 minute
-#      - delay: 00:01:00
+    - delay: 00:01:00
 # Turn off Living room lights and TV
     - service: switch.turn_off
       entity_id:
@@ -543,26 +538,6 @@
     - service: media_player.turn_off
       entity_id:
         - media_player.living_room_tv
-# HTML5 Notification
-#      - service: notify.html5
-#        data:
-#          title: "Bedtime Notification"
-#          message: 'Bedtime Automation 2 minutes to go'
-#          target: "bills_6p"
-#          data:
-#            tag: 'bedtime_automation'
-# Wait 1 minute
-#      - delay: 00:01:00
-# HTML5 Notification
-#      - service: notify.html5
-#        data:
-#          title: "Bedtime Notification"
-#          message: 'Bedtime Automation 1 minutes to go'
-#          target: "bills_6p"
-#          data:
-#            tag: 'bedtime_automation'
-# Wait 1 minute
-#      - delay: 00:01:00
 # Group all the Sonos
     - service: media_player.sonos_unjoin
       entity_id:
@@ -584,22 +559,11 @@
       entity_id: switch.sleepytime_tasker
 # Start Sleepytime on bedroom Sonos
 #      - service: script.bedtime_music
-    - service: shell_command.sonos_playlist_sleepy_time
+#    - service: shell_command.sonos_playlist_sleepy_time
 # Turn off bedlights
     - service: light.turn_off
       entity_id:
         - group.bed_lights
-# Lock Kevo
-    - service: switch.turn_on
-      entity_id: switch.frontdoor_kevo
-# Arm Security
-    - service: alarm_control_panel.alarm_arm_home
-      entity_id: alarm_control_panel.alarm
-# Turn on sleeping status
-    - service: input_select.select_option
-      data:
-        entity_id: input_select.billy_status
-        option: "sleeping"
 # Wait 10 minutes
 #      - delay: 00:10:00
 # Stop lights from turning back on
@@ -828,9 +792,9 @@
         entity_id: input_boolean.lights_disable
         state: 'off'
 # Only turn lights on if there isnt any light in the room
-      - condition: numeric_state
-        entity_id: sensor.aeotec_zw100_multisensor_6_luminance
-        above: 1
+#      - condition: numeric_state
+#        entity_id: sensor.aeotec_zw100_multisensor_6_luminance
+#        above: 1
 
   action:
 # Turn some bed lights on
@@ -962,12 +926,13 @@
       entity_id:
         - switch.lamp_1
         - switch.lamp_2
-#          - switch.tv_switch
+        - switch.tv_switch
 # Nest
-#      - service: climate.set_away_mode
-#        entity_id:
-#          - climate.living_room
-#        away_mode: 'on'
+    - service: climate.set_away_mode
+      data:
+        entity_id:
+          - climate.living_room
+        away_mode: 'true'
 # Lock Kevo
     - service: switch.turn_on
       entity_id: switch.frontdoor_kevo
@@ -1023,14 +988,14 @@
         state: 'off'
 
   action:
-# Sonos 
+# Sonos
     - service: media_player.turn_off
       entity_id:
         - group.sonos
 # Lights
     - service: light.turn_off
       entity_id:
-        - group.all_lights
+#        - group.all_lights
         - light.ge_12724_3way_dimmer_switch_level
         - light.billy_bedside_strip
         - light.foot_of_bed
@@ -1041,8 +1006,13 @@
       entity_id:
         - switch.lamp_1
         - switch.lamp_2
-#          - switch.tv_switch
+        - switch.tv_switch
 # Nest
+    - service: climate.set_away_mode
+      data:
+        entity_id:
+          - climate.living_room
+        away_mode: 'true'
 # Lock Kevo
     - service: switch.turn_on
       entity_id: switch.frontdoor_kevo
@@ -1055,7 +1025,6 @@
         entity_id: input_select.billy_status
         option: "away"
 # IFTTT Notification
-
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Gina Not Home"}
     - service: notify.html5
@@ -1730,7 +1699,21 @@
     - platform: state
       entity_id: media_player.living_room_tv
       to: 'off'
-
+  condition:
+    condition: and
+    conditions:
+    - condition: state
+      entity_id: media_player.bedroom
+      state: 'paused'
+    - condition: state
+      entity_id: media_player.kitchen
+      state: 'paused'     
+    - condition: state
+      entity_id: media_player.living_room
+      state: 'paused'
+    - condition: state
+      entity_id: media_player.playroom
+      state: 'paused'  
   action:
     - service: homeassistant.turn_off
       entity_id: input_boolean.media_playing
@@ -1755,6 +1738,52 @@
 # IFTTT Notification
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Presence Living Room TV is Running"}
+
+###################################################################
+- id: presence_sonos_paused
+###################################################################
+  alias: Presence Sonos Paused
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: 
+        - media_player.bedroom
+        - media_player.kitchen
+        - media_player.living_room
+        - media_player.playroom
+      to: 'paused'
+  condition:
+    - condition: state
+      entity_id: media_player.living_room_tv
+      state: 'off'
+
+  action:
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.media_playing
+# IFTTT Notification
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Presence Sonos Paused"}
+
+###################################################################
+- id: presence_sonos_playing
+###################################################################
+  alias: Presence Sonos Playing
+  hide_entity: false
+  trigger:
+    - platform: state
+      entity_id: 
+        - media_player.bedroom
+        - media_player.kitchen
+        - media_player.living_room
+        - media_player.playroom
+      to: 'playing'
+
+  action:
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.media_playing
+# IFTTT Notification
+    - service: ifttt.trigger
+      data: {"event":"Event_Recorder", "value1":"Presence Sonos Playing"}
 
 ###################################################################
 - id: reset_bedtime_switch
@@ -2965,3 +2994,22 @@
 # Event Recorder spreadsheet
     - service: ifttt.trigger
       data: {"event":"Event_Recorder", "value1":"Minimote Yellow Button 4 Short Press"}
+###################################################################
+- id: delivery_notification
+###################################################################
+  alias: Delivery Notification
+  hide_entity: false
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.deliveries_today
+      above: 0
+  action:
+    - service: notify.html5
+      data:
+        title: "Delivery Today"
+        message: 'Delivery Today'
+        target:
+          - "bills_6p"
+          - "ginas_s6"
+        data:
+          tag: 'delivery_today'

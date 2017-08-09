@@ -5,6 +5,7 @@ panic_button:
   control: hidden
   entities:
   - input_boolean.panic_mode
+  - script.panicoff
 # Cards
 master_control:
   name: Master Control

@@ -10,6 +10,7 @@ binary_sensor.aeotec_zw112_door_window_sensor_6_sensor:
   friendly_name: Front Door Sensor
 sensor.front_door_sensor:
   friendly_name: Front Door
+  icon: mdi:glassdoor
 
 # Kevo lock
 switch.frontdoor_kevo:

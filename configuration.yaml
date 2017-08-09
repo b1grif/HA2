@@ -202,9 +202,36 @@ sensor:
   - platform: fedex
     username: !secret fedex_username
     password: !secret fedex_password
-#  - platform: usps
-#    username: !secret usps_username
-#    password: !secret usps_password
+  - platform: usps
+    username: !secret usps_username
+    password: !secret usps_password
+  - platform: template
+    sensors:
+      packages_in_transit:
+        friendly_name: "Packages in Transit"
+        value_template: >
+          {% macro in_transit(sensor) %}
+            {{sensor.state|int - delivered(sensor)|int}}
+          {% endmacro %}
+          {% macro delivered(sensor) %}
+            {% if 'delivered' in sensor.attributes %}
+              {{sensor.attributes.delivered}}
+            {% else %}
+              0
+            {% endif %}
+          {% endmacro %}
+          {{in_transit(states.sensor.usps_packages)|int + in_transit(states.sensor.ups)|int + in_transit(states.sensor.fedex)|int}}
+      deliveries_today:
+        friendly_name: "Today's Deliveries"
+        value_template: >
+          {% macro delivered(sensor) %}
+            {% if 'delivered' in sensor.attributes %}
+              {{sensor.attributes.delivered}}
+            {% else %}
+              0
+            {% endif %}
+          {% endmacro %}
+          {{delivered(states.sensor.usps_packages)|int + delivered(states.sensor.ups)|int + delivered(states.sensor.fedex)|int}}
   - platform: google_travel_time
     name: Billy Phone To Home
     api_key: !secret maps_api
@@ -345,6 +372,21 @@ script:
       - delay:
           seconds: 3
       - service: script.panic1
+  panicoff:
+    sequence:
+      - service: script.turn_off
+        entity_id:
+          - script.panic1
+          - script.panic2
+# Lights
+      - service: light.turn_off
+        entity_id:
+          - group.bed_lights
+          - light.ge_12724_3way_dimmer_switch_level
+# WEMO Switches
+      - service: switch.turn_off
+        entity_id:
+          - group.all_switches
   pull_from_github:
     sequence:
       - service: shell_command.git_pull
@@ -395,6 +437,64 @@ conversation:
 discovery:
 # Enables the frontend
 frontend:
+  themes:
+    minimal:
+      dark-primary-color: "#192231"
+      primary-color: "#98878f"
+      light-primary-color: "#98878f"
+      paper-toggle-button-checked-ink-color: "#494e6b"
+      paper-toggle-button-checked-button-color: "#494e6b"
+      paper-toggle-button-checked-bar-color: "#494e6b"
+      paper-slider-knob-color: "#494e6b"
+      paper-slider-knob-start-color: "#494e6b"
+      paper-slider-pin-color: "#494e6b"
+      paper-slider-active-color: "#494e6b"
+    stormy_hues:
+      dark-primary-color: "#192231"
+      primary-color: "#98878f"
+      light-primary-color: "#98878f"
+      paper-toggle-button-checked-ink-color: "#494e6b"
+      paper-toggle-button-checked-button-color: "#494e6b"
+      paper-toggle-button-checked-bar-color: "#494e6b"
+      paper-slider-knob-color: "#494e6b"
+      paper-slider-knob-start-color: "#494e6b"
+      paper-slider-pin-color: "#494e6b"
+      paper-slider-active-color: "#494e6b"
+    vintage:
+      dark-primary-color: "#373f27"
+      primary-color: "#636b46"
+      light-primary-color: "#e9e7da"
+      paper-toggle-button-checked-ink-color: "#cda34f"
+      paper-toggle-button-checked-button-color: "#cda34f"
+      paper-toggle-button-checked-bar-color: "#cda34f"
+      paper-slider-knob-color: "#cda34f"
+      paper-slider-knob-start-color: "#cda34f"
+      paper-slider-pin-color: "#cda34f"
+      paper-slider-active-color: "#cda34f"
+    done1:
+      dark-primary-color: "#565656"
+      primary-color: "#C09F80"
+      light-primary-color: "#D7CEC7"
+      paper-toggle-button-checked-ink-color: "#76323F"
+      paper-toggle-button-checked-button-color: "#76323F"
+      paper-toggle-button-checked-bar-color: "#76323F"
+      paper-slider-knob-color: "#76323F"
+      paper-slider-knob-start-color: "#76323F"
+      paper-slider-pin-color: "#76323F"
+      paper-slider-active-color: "#76323F"
+      paper-slider-secondary-color: "#FFE0B2"
+    dark_mode:
+      dark-primary-color: "#607D8B"
+      primary-color: "#90A4AE"
+      light-primary-color: "#CFD8DC"
+      paper-toggle-button-checked-ink-color: "#388E3C"
+      paper-toggle-button-checked-button-color: "#388E3C"
+      paper-toggle-button-checked-bar-color: "#388E3C"
+      paper-slider-knob-color: "#388E3C"
+      paper-slider-knob-start-color: "#388E3C"
+      paper-slider-pin-color: "#388E3C"
+      paper-slider-active-color: "#388E3C"
+      paper-slider-secondary-color: "#388E3C"
 # Enables support for tracking state changes over time.
 history:
 # View all events in a logbook
