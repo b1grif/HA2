@@ -42,6 +42,11 @@ camera:
   - platform: generic
     still_image_url: https://radblast.wunderground.com/cgi-bin/radar/WUNIDS_map?station=LOT&brand=wui&num=1&delay=15&type=N0R&frame=0&scale=1.000&noclutter=0&showstorms=0&mapx=400&mapy=240&centerx=400&centery=240&transx=0&transy=0&showlabels=1&severe=0&rainsnow=0&lightning=0&smooth=0&rand=24691024&lat=0&lon=0&label=you
     name: weather_radar
+  - platform: foscam
+    ip: !secret cam_backdoor
+    username: !secret foscam_user
+    password: !secret foscam_pass
+    name: Backdoor
 
 climate:
   - platform: nest
@@ -61,6 +66,24 @@ device_tracker:
     devices:
       bills_6p: /zanzito/bills_phone/location/
       ginas_s6: /zanzito/ginas_phone/location/
+
+duckdns:
+  domain: !secret duckdns_domain
+  access_token: !secret duckdns_token
+
+emulated_hue:
+  host_ip: 192.168.0.30
+  listen_port: 80
+  expose_by_default: false
+
+google_assistant:
+  project_id: !secret google_proj_id
+  client_id: !secret google_client_id
+  access_token: !secret google_access_token
+  exposed_domains:
+    - switch
+    - light
+    - group
 
 ifttt:
   key: !secret ifttt_secret
@@ -115,7 +138,6 @@ notify:
     name: Living Room TV
 
 
-# Weather Prediction
 sensor:
   - platform: darksky
     api_key: !secret dark_sky_api
@@ -180,11 +202,8 @@ sensor:
       - ping
       - download
       - upload
-  - platform: command_line
-    name: SSL Cert Expiry
-    unit_of_measurement: days
-    scan_interval: 86400
-    command: !secret ssl_cert_expiry
+  - platform: cert_expiry
+    host: griffithshome.duckdns.org
   - platform: systemmonitor
     resources:
       - type: disk_free
@@ -196,9 +215,6 @@ sensor:
     display_options:
       - "date_time"
   - platform: yr
-  - platform: ups
-    username: !secret ups_username
-    password: !secret ups_password
   - platform: fedex
     username: !secret fedex_username
     password: !secret fedex_password
@@ -263,6 +279,10 @@ sensor:
         value_template: "{{ states.binary_sensor.aeotec_zw112_door_window_sensor_6_sensor.attributes.battery_level }}"
         friendly_name: 'Front Door Sensor'
         unit_of_measurement: '%'
+  - platform: comed_hourly_pricing
+    monitored_feeds:
+      - type: five_minute
+      - type: current_hour_average
 
 # Track the sun
 sun:
@@ -279,6 +299,21 @@ switch:
     switches:
       sleepytime_tasker:
         command_on: 'python3 /home/homeassistant/.homeassistant/python_scripts/sleepytime_tasker.py'
+#Switch for Foscam Motion Detection
+  - platform: command_line
+    switches:
+      foscam_motion:
+        command_on: !secret foscam_motion_on
+        command_off: !secret foscam_motion_off
+        command_state: !secret foscam_motion_state
+        value_template: '{{ value == "1" }}'
+  - platform: flux
+    lights:
+      - light.billy_bedside_strip
+      - light.foot_of_bed
+      - light.gina_bedside_strip
+      - light.head_of_bed
+    mode: mired
 
 # Text to speech
 tts:
@@ -286,6 +321,10 @@ tts:
     cache: true
     cache_dir: /tmp/tts
     time_memory: 300
+
+usps:
+  username: !secret ups_username
+  password: !secret ups_password
 
 wemo:
 
@@ -317,108 +356,7 @@ shell_command: !include shell_commands.yaml
 # with each file content being an entry in the list
 alert: !include_dir_merge_list alert
 
-script:
-  backup_ha:
-    sequence:
-#      - service: shell_command.mount_dir
-      - service: shell_command.backup_folder
-      - service: shell_command.backup_configuration
-      - service: notify.html5
-        data:
-          title: "Backing Up HA Configs"
-          message: 'Backup started'
-          target: "bills_6p"
-          data:
-            tag: 'backup_script'
-  bed_colorloop:
-    sequence:
-      - service: light.turn_on
-        data:
-          entity_id: group.bed_lights
-          effect: colorloop
-          brightness: 250
-          transition: 5
-  bedtime_music:
-    sequence:
-      - service: media_player.select_source
-        data:
-          entity_id: media_player.bedroom
-          source: 'River Flows In You - Original'
-  panic1:
-    sequence:
-      - service: light.turn_on
-        entity_id:
-          - group.bed_lights
-        data:
-          brightness: 250
-          xy_color: [ 0.329, 0.35 ]
-      - service: light.turn_on
-        data:
-          entity_id: group.bed_lights
-          flash: short
-          brightness: 250
-          xy_color: [ 0.704, 0.296 ]
-      - delay:
-          seconds: 3
-      - service: script.panic2
-  panic2:
-    sequence:
-      - service: light.turn_on
-        data:
-          entity_id: group.bed_lights
-          flash: short
-          brightness: 250
-          xy_color: [ 0.704, 0.296 ]
-      - delay:
-          seconds: 3
-      - service: script.panic1
-  panicoff:
-    sequence:
-      - service: script.turn_off
-        entity_id:
-          - script.panic1
-          - script.panic2
-# Lights
-      - service: light.turn_off
-        entity_id:
-          - group.bed_lights
-          - light.ge_12724_3way_dimmer_switch_level
-# WEMO Switches
-      - service: switch.turn_off
-        entity_id:
-          - group.all_switches
-  pull_from_github:
-    sequence:
-      - service: shell_command.git_pull
-      - service: homeassistant.restart
-  sonos_tts:
-    sequence:
-      - service: media_player.sonos_snapshot
-        data_template:
-          entity_id: "{{ sonos_entity }}"
-      - service: media_player.sonos_unjoin
-        data_template:
-          entity_id: "{{ sonos_entity }}"
-      - service: media_player.volume_set
-        data_template:
-          entity_id: "{{ sonos_entity }}"
-          volume_level: "{{ volume }}"
-      - service: tts.voicerss_say
-        data_template:
-          entity_id: "{{ sonos_entity }}"
-          message: "{{ message }}"
-      - delay: "{{ delay }}"
-      - service: media_player.sonos_restore
-        data_template:
-          entity_id: "{{ sonos_entity }}"
-  zanzito_send_notification:
-    sequence:
-      - service: mqtt.publish
-        data_template:
-          topic: 'zanzito/{{ dest_id }}/notification'
-          payload: '{{ message }}'
-          qos: 1
-          retain: 0
+script: !include scripts.yaml
 
 # Dir List
 zone: !include_dir_list zones
@@ -435,6 +373,8 @@ config:
 conversation:
 # Discover some devices automatically
 discovery:
+  ignore:
+    - plex_mediaserver
 # Enables the frontend
 frontend:
   themes:
@@ -507,7 +447,8 @@ logbook:
 updater:
   include_used_components: true
 recorder:
-  purge_days: 3
+  purge_interval: 7 
+  purge_keep_days: 2
 
 
 

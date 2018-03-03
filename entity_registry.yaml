@@ -1,0 +1,45 @@
+climate.living_room:
+  platform: nest
+  unique_id: OE4SQZE3i2s0oJY2A7z4fw4MptI6QPOC
+climate.dining_room:
+  platform: nest
+  unique_id: lxpE6vac55UdgweBie3Cyg4MptI6QPOC
+switch.tv_switch:
+  platform: wemo
+  unique_id: 231622K12008BE
+switch.lamp_1:
+  platform: wemo
+  unique_id: 221622K0102F61
+switch.lamp_2:
+  platform: wemo
+  unique_id: 221622K01012BF
+media_player.living_room:
+  platform: cast
+  unique_id: 2a69f3d7-7823-8129-2ea3-88010c92a731
+media_player.bedroom:
+  platform: sonos
+  unique_id: RINCON_5CAAFD9C47C601400
+media_player.kitchen:
+  platform: sonos
+  unique_id: RINCON_5CAAFD6CE8C801400
+media_player.living_room_2:
+  platform: sonos
+  unique_id: RINCON_5CAAFD17C19401400
+media_player.playroom:
+  platform: sonos
+  unique_id: RINCON_5CAAFD9C46DC01400
+media_player.kitchen_speaker:
+  platform: cast
+  unique_id: 7d97193a-ee30-c9f4-9dc2-ea02920b4b75
+light.foot_of_bed:
+  platform: hue
+  unique_id: 00:17:88:01:00:ce:d1:95-0b
+light.head_of_bed:
+  platform: hue
+  unique_id: 00:17:88:01:00:ce:d1:8f-0b
+light.billy_bedside_strip:
+  platform: hue
+  unique_id: 00:17:88:01:00:ce:d5:9b-0b
+light.gina_bedside_strip:
+  platform: hue
+  unique_id: 00:17:88:01:00:ce:d5:99-0b
